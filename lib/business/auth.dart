@@ -8,21 +8,25 @@ enum authProblems { UserNotFound, PasswordNotValid, NetworkError, UnknownError }
 
 class Auth {
   static Future<String> signIn(String email, String password) async {
-    FirebaseUser user = await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password);
-    return user.uid;
+    AuthResult user = (await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password)) ;
+    final FirebaseUser u = await FirebaseAuth.instance.currentUser();
+    return u.email;
   }
 
-  static Future<String> signInWithFacebok(String accessToken) async {
-    FirebaseUser user = await FirebaseAuth.instance
-        .signInWithFacebook(accessToken: accessToken);
-    return user.uid;
-  }
+//  static Future<String> signInWithFacebok(String accessToken) async {
+//    FirebaseUser user = await FirebaseAuth.instance.(accessToken: accessToken);
+//    return user.uid;
+//  }
 
   static Future<String> signUp(String email, String password) async {
-    FirebaseUser user = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: password);
-    return user.uid;
+    AuthResult user = (await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: email, password: password)) ;
+    AuthResult user1 = (await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password)) ;
+    final FirebaseUser u = await FirebaseAuth.instance.currentUser();
+
+    return u.uid;
   }
 
   static Future<void> signOut() async {
@@ -38,9 +42,9 @@ class Auth {
     checkUserExist(user.userID).then((value) {
       if (!value) {
         print("user ${user.firstName} ${user.email} added");
-        Firestore.instance
-            .document("users/${user.userID}")
-            .setData(user.toJson());
+          Firestore.instance
+              .document("users/${user.userID}")
+              .setData(user.toJson());
       } else {
         print("user ${user.firstName} ${user.email} exists");
       }

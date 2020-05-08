@@ -1,12 +1,13 @@
 import "package:flutter/material.dart";
 
 class Walkthrough {
-  IconData icon;
+  String icon;
   String title;
   String description;
   Widget extraWidget;
+  Color color;
   
-  Walkthrough({this.icon, this.title, this.description, this.extraWidget}) {
+  Walkthrough({this.icon, this.title, this.description, this.extraWidget,this.color}) {
     if (extraWidget == null) {
       extraWidget = new Container();
     }

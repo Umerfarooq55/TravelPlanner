@@ -1,163 +1,45 @@
 {
   "project_info": {
-    "project_number": "706061484183",
-    "firebase_url": "https://ios-app-templates.firebaseio.com",
-    "project_id": "ios-app-templates",
-    "storage_bucket": "ios-app-templates.appspot.com"
+    "project_number": "106765471902",
+    "firebase_url": "https://travel-planner-fb4ee.firebaseio.com",
+    "project_id": "travel-planner-fb4ee",
+    "storage_bucket": "travel-planner-fb4ee.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:706061484183:android:2d2dba50de144d81",
+        "mobilesdk_app_id": "1:106765471902:android:d1ff670ea48f8d46656b8f",
         "android_client_info": {
-          "package_name": "com.instaflutter.onboarding.android"
+          "package_name": "trip.travelplanner.vacationholiday"
         }
       },
       "oauth_client": [
         {
-          "client_id": "706061484183-l0l58dds4kg329fh1trbiha1ci5rqm5n.apps.googleusercontent.com",
+          "client_id": "106765471902-86k7umsuk30qhi7fd5666v9huu148sdc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "trip.travelplanner.vacationholiday",
+            "certificate_hash": "b7d2b6e8941753b83a365adb4ec51f9c433fd7d5"
+          }
+        },
+        {
+          "client_id": "106765471902-ukq8bq0m9vejtaddjicos725j8bbajtj.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDfUhwskZ_-VrNfeJ51o1IawY1DjbWFp-Y"
+          "current_key": "AIzaSyCNT4GVo09jluZdhLuqXvobwLT6isk93CA"
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:706061484183:android:75277ea79fec2179",
-        "android_client_info": {
-          "package_name": "com.listingapp"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "706061484183-l0l58dds4kg329fh1trbiha1ci5rqm5n.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDfUhwskZ_-VrNfeJ51o1IawY1DjbWFp-Y"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:706061484183:android:36a9299534d1ef8c",
-        "android_client_info": {
-          "package_name": "com.messenger"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "706061484183-l0l58dds4kg329fh1trbiha1ci5rqm5n.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDfUhwskZ_-VrNfeJ51o1IawY1DjbWFp-Y"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:706061484183:android:3f4fa551d34cc26f",
-        "android_client_info": {
-          "package_name": "com.restaurantapp"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "706061484183-l0l58dds4kg329fh1trbiha1ci5rqm5n.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDfUhwskZ_-VrNfeJ51o1IawY1DjbWFp-Y"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:706061484183:android:43820dc9f598d053",
-        "android_client_info": {
-          "package_name": "io.instamobile.rnrealestateapp"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "706061484183-l0l58dds4kg329fh1trbiha1ci5rqm5n.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDfUhwskZ_-VrNfeJ51o1IawY1DjbWFp-Y"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "106765471902-ukq8bq0m9vejtaddjicos725j8bbajtj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

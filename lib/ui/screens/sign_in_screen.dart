@@ -1,3 +1,5 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import "package:onboarding_flow/ui/widgets/custom_text_field.dart";
@@ -7,6 +9,8 @@ import 'package:flutter/services.dart';
 import 'package:onboarding_flow/ui/widgets/custom_flat_button.dart';
 import 'package:onboarding_flow/ui/widgets/custom_alert_dialog.dart';
 import 'package:onboarding_flow/models/user.dart';
+
+import 'Feedback.dart';
 
 class SignInScreen extends StatefulWidget {
   _SignInScreenState createState() => _SignInScreenState();
@@ -19,7 +23,7 @@ class _SignInScreenState extends State<SignInScreen> {
   CustomTextField _passwordField;
   bool _blackVisible = false;
   VoidCallback onBackPress;
-
+  FirebaseAnalytics analytics = FirebaseAnalytics();
   @override
   void initState() {
     super.initState();
@@ -46,6 +50,35 @@ class _SignInScreenState extends State<SignInScreen> {
       hint: "Password",
       validator: Validator.validatePassword,
     );
+
+
+  }
+
+  void dialog() {
+    AwesomeDialog(
+      context: context,
+      animType: AnimType.SCALE,
+      dialogType: DialogType.INFO,
+      body: Center(child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+         "Hello! This app is still in beta. Please don't rate it on the store yet. We're working hard to make it awesome for you soon! Meanwhile, feel free to leave your feedback anytime from the app menu. Thank you.",
+          style: TextStyle(fontStyle: FontStyle.normal),
+        ),
+      ),),
+      tittle: 'This is Ignored',
+      desc:   'This is also Ignored',
+      btnCancelText: "Feedback",
+//      btnCancelOnPress: () {
+//        Navigator.push(
+//            context,
+//            MaterialPageRoute(builder: (context) =>
+//                UserFeedback())
+//        );
+//      },
+      btnOkOnPress: () {},
+
+    ).show();
   }
 
   @override
@@ -106,38 +139,38 @@ class _SignInScreenState extends State<SignInScreen> {
                         color: Color.fromRGBO(212, 20, 15, 1.0),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(
-                        "OR",
-                        softWrap: true,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.black,
-                          decoration: TextDecoration.none,
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.w300,
-                          fontFamily: "OpenSans",
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 14.0, horizontal: 40.0),
-                      child: CustomFlatButton(
-                        title: "Facebook Login",
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        textColor: Colors.white,
-                        onPressed: () {
-                          _facebookLogin(context: context);
-                        },
-                        splashColor: Colors.black12,
-                        borderColor: Color.fromRGBO(59, 89, 152, 1.0),
-                        borderWidth: 0,
-                        color: Color.fromRGBO(59, 89, 152, 1.0),
-                      ),
-                    ),
+//                    Padding(
+//                      padding: const EdgeInsets.all(10.0),
+//                      child: Text(
+//                        "OR",
+//                        softWrap: true,
+//                        textAlign: TextAlign.center,
+//                        style: TextStyle(
+//                          color: Colors.black,
+//                          decoration: TextDecoration.none,
+//                          fontSize: 15.0,
+//                          fontWeight: FontWeight.w300,
+//                          fontFamily: "OpenSans",
+//                        ),
+//                      ),
+//                    ),
+//                    Padding(
+//                      padding: const EdgeInsets.symmetric(
+//                          vertical: 14.0, horizontal: 40.0),
+//                      child: CustomFlatButton(
+//                        title: "Facebook Login",
+//                        fontSize: 22,
+//                        fontWeight: FontWeight.w700,
+//                        textColor: Colors.white,
+//                        onPressed: () {
+//                          _facebookLogin(context: context);
+//                        },
+//                        splashColor: Colors.black12,
+//                        borderColor: Color.fromRGBO(59, 89, 152, 1.0),
+//                        borderWidth: 0,
+//                        color: Color.fromRGBO(59, 89, 152, 1.0),
+//                      ),
+//                    ),
                   ],
                 ),
                 SafeArea(
@@ -174,7 +207,16 @@ class _SignInScreenState extends State<SignInScreen> {
       _blackVisible = !_blackVisible;
     });
   }
+  Future<void> _sendAnalyticsEvent(String name) async {
 
+    await analytics.logEvent(
+      name: 'Login_Success',
+      parameters: <String, dynamic>{
+        'UserEmail':name,
+
+      },
+    );
+  }
   void _emailLogin(
       {String email, String password, BuildContext context}) async {
     if (Validator.validateEmail(email) &&
@@ -183,7 +225,11 @@ class _SignInScreenState extends State<SignInScreen> {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         _changeBlackVisible();
         await Auth.signIn(email, password)
-            .then((uid) => Navigator.of(context).pop());
+            .then((uid) =>
+        _sendAnalyticsEvent(uid).then((value) =>
+            Navigator.of(context).pushNamed("/main")
+        ));
+
       } catch (e) {
         print("Error in email sign in: $e");
         String exception = Auth.getExceptionText(e);
@@ -196,42 +242,7 @@ class _SignInScreenState extends State<SignInScreen> {
     }
   }
 
-  void _facebookLogin({BuildContext context}) async {
-    try {
-      SystemChannels.textInput.invokeMethod('TextInput.hide');
-      _changeBlackVisible();
-      FacebookLogin facebookLogin = new FacebookLogin();
-      FacebookLoginResult result = await facebookLogin
-          .logInWithReadPermissions(['email', 'public_profile']);
-      switch (result.status) {
-        case FacebookLoginStatus.loggedIn:
-          Auth.signInWithFacebok(result.accessToken.token).then((uid) {
-            Auth.getCurrentFirebaseUser().then((firebaseUser) {
-              User user = new User(
-                firstName: firebaseUser.displayName,
-                userID: firebaseUser.uid,
-                email: firebaseUser.email ?? '',
-                profilePictureURL: firebaseUser.photoUrl ?? '',
-              );
-              Auth.addUser(user);
-              Navigator.of(context).pop();
-            });
-          });
-          break;
-        case FacebookLoginStatus.cancelledByUser:
-        case FacebookLoginStatus.error:
-          _changeBlackVisible();
-      }
-    } catch (e) {
-      print("Error in facebook sign in: $e");
-      String exception = Auth.getExceptionText(e);
-      _showErrorAlert(
-        title: "Login failed",
-        content: exception,
-        onPressed: _changeBlackVisible,
-      );
-    }
-  }
+
 
   void _showErrorAlert({String title, String content, VoidCallback onPressed}) {
     showDialog(

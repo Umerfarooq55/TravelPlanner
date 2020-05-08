@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import "package:flutter/material.dart";
 import 'package:onboarding_flow/business/auth.dart';
 import "package:onboarding_flow/ui/widgets/custom_text_field.dart";
@@ -23,7 +24,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   CustomTextField _passwordField;
   bool _blackVisible = false;
   VoidCallback onBackPress;
-
+  FirebaseAnalytics analytics = FirebaseAnalytics();
   @override
   void initState() {
     super.initState();
@@ -40,15 +41,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
       hint: "Full Name",
       validator: Validator.validateName,
     );
-    _phoneField = new CustomTextField(
-      baseColor: Colors.grey,
-      borderColor: Colors.grey[400],
-      errorColor: Colors.red,
-      controller: _number,
-      hint: "Phone Number",
-      validator: Validator.validateNumber,
-      inputType: TextInputType.number,
-    );
+//    _phoneField = new CustomTextField(
+//      baseColor: Colors.grey,
+//      borderColor: Colors.grey[400],
+//      errorColor: Colors.red,
+//      controller: _number,
+//      hint: "Phone Number",
+//      validator: Validator.validateNumber,
+//      inputType: TextInputType.number,
+//    );
     _emailField = new CustomTextField(
       baseColor: Colors.grey,
       borderColor: Colors.grey[400],
@@ -102,11 +103,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
                       child: _nameField,
                     ),
-                    Padding(
-                      padding:
-                          EdgeInsets.only(top: 10.0, left: 15.0, right: 15.0),
-                      child: _phoneField,
-                    ),
+//                    Padding(
+//                      padding:
+//                          EdgeInsets.only(top: 10.0, left: 15.0, right: 15.0),
+//                      child: _phoneField,
+//                    ),
                     Padding(
                       padding:
                           EdgeInsets.only(top: 10.0, left: 15.0, right: 15.0),
@@ -126,6 +127,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         fontWeight: FontWeight.w700,
                         textColor: Colors.white,
                         onPressed: () {
+
                           _signUp(
                               fullname: _fullname.text,
                               email: _email.text,
@@ -168,7 +170,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
+  Future<void> _sendAnalyticsEvent(String name) async {
 
+    await analytics.logEvent(
+      name: 'Signup_Success',
+      parameters: <String, dynamic>{
+        'UserEmail':name,
+
+      },
+    );
+  }
   void _changeBlackVisible() {
     setState(() {
       _blackVisible = !_blackVisible;
@@ -188,7 +199,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       try {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         _changeBlackVisible();
+        print("Umer SIgnup...");
         await Auth.signUp(email, password).then((uID) {
+          _sendAnalyticsEvent(email);
+
           Auth.addUser(new User(
               userID: uID,
               email: email,
@@ -196,6 +210,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               profilePictureURL: ''));
           onBackPress();
         });
+        print("Umer SIgnup... complete");
       } catch (e) {
         print("Error in sign up: $e");
         String exception = Auth.getExceptionText(e);

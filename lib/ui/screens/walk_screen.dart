@@ -1,29 +1,41 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_id/device_id.dart';
 import 'package:flutter/material.dart';
 import "package:flutter_swiper/flutter_swiper.dart";
 import "package:onboarding_flow/models/walkthrough.dart";
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:onboarding_flow/ui/widgets/custom_flat_button.dart';
-
+import 'package:package_info/package_info.dart';
 class WalkthroughScreen extends StatefulWidget {
   final SharedPreferences prefs;
   final List<Walkthrough> pages = [
   Walkthrough(
-      icon: Icons.developer_mode,
-      title: "Flutter Onboarding",
+      icon: 'assets/images/slide1.png',
+      title: "Travel Planner",
+      color: Color(0xff6495ED),
       description:
-          "Build your onboarding flow in seconds.",
+          "Your personal travel assistant, at the tap of your finger.",
     ),
   Walkthrough(
-    icon: Icons.layers,
-    title: "Firebase Auth",
-    description: "Use Firebase for user management.",
+    icon: 'assets/images/slide2.png',
+    title: "",
+    color: Color(0xff6495ED),
+    description: "Plan your travel based on what you love to do",
   ),
   Walkthrough(
-    icon: Icons.account_circle,
-    title: "Facebook Login",
-    description:
-        "Leverage Facebook to log in user easily.",
-  ),
+      icon:'assets/images/slide3.png',
+      title: "",
+      color: Color(0xff6495ED),
+      description:
+      "Select your interests (eg. hicking, lakes, pubs..",
+    ),
+    Walkthrough(
+      icon: 'assets/images/slide4.png',
+      title: "",
+      color: Color(0xff6495ED),
+      description:
+      "Find cities where you can do what you like",
+    ),
   ];
 
   WalkthroughScreen({this.prefs});
@@ -33,6 +45,7 @@ class WalkthroughScreen extends StatefulWidget {
 }
 
 class _WalkthroughScreenState extends State<WalkthroughScreen> {
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,15 +76,16 @@ class _WalkthroughScreenState extends State<WalkthroughScreen> {
       Walkthrough page = widget.pages[i];
       widgets.add(
         new Container(
-          color: Color.fromRGBO(212, 20, 15, 1.0),
+          color:page.color,
           child: ListView(
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 70.0),
-                child: Icon(
-                  page.icon,
-                  size: 125.0,
-                  color: Colors.white,
+                child: Image(
+                  image: AssetImage(page.icon),
+                  color:Colors.white,
+                  width:125,
+                  height: 125,
                 ),
               ),
               Padding(
@@ -99,7 +113,7 @@ class _WalkthroughScreenState extends State<WalkthroughScreen> {
                   style: TextStyle(
                     color: Colors.white,
                     decoration: TextDecoration.none,
-                    fontSize: 15.0,
+                    fontSize: 22.0,
                     fontWeight: FontWeight.w300,
                     fontFamily: "OpenSans",
                   ),
@@ -116,22 +130,23 @@ class _WalkthroughScreenState extends State<WalkthroughScreen> {
     }
     widgets.add(
       new Container(
-        color: Color.fromRGBO(212, 20, 15, 1.0),
+        color:Color(0xff6495ED),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Icon(
-                Icons.code,
-                size: 125.0,
-                color: Colors.white,
+              Image(
+                image: AssetImage('assets/images/slide5.png'),
+                color:Colors.white,
+                width:125,
+                height: 125,
               ),
               Padding(
                 padding:
                     const EdgeInsets.only(top: 50.0, right: 15.0, left: 15.0),
                 child: Text(
-                  "Jump straight into the action.",
+                  "Explore those cities, and plan your next trip!",
                   softWrap: true,
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -147,12 +162,13 @@ class _WalkthroughScreenState extends State<WalkthroughScreen> {
                 padding:
                     const EdgeInsets.only(top: 20.0, right: 15.0, left: 15.0),
                 child: CustomFlatButton(
-                  title: "Get Started",
+                  title: " Let's get started!",
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                   textColor: Colors.white,
-                  onPressed: () {
-                    widget.prefs.setBool('seen', true);
+                  onPressed: () async {
+                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    prefs.setBool('seen', true);
                     Navigator.of(context).pushNamed("/root");
                   },
                   splashColor: Colors.black12,
@@ -167,5 +183,54 @@ class _WalkthroughScreenState extends State<WalkthroughScreen> {
       ),
     );
     return widgets;
+  }
+
+  Color changeColor(int i) {
+
+    switch (1) {
+      case 0:
+        return Colors.grey;
+      // do something
+        break;
+      case 1:
+        return Colors.black54;
+      case 2:
+      // do something
+        return Colors.pink;
+        break;
+
+    }
+  }
+
+  @override
+  void initState() {
+  getimei().then((id) =>
+  mobileInfo().then((value) =>
+      Firestore.instance
+          .collection("MobileID")
+          .document(id)
+          .setData(
+          {
+            "current_version":value
+          }
+      )
+
+  )
+  );
+
+  }
+
+  Future<String> getimei() async {
+
+     print("GETIMEI");
+    String imei = await DeviceId.getID;
+     print("GETIMEI:  "+imei);
+    return imei;
+  }
+  Future<String> mobileInfo() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    print("packageInfo:  "+packageInfo.version);
+    return packageInfo.version;
   }
 }

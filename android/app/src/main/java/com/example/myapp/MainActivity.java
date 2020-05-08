@@ -1,4 +1,4 @@
-package com.instaflutter.onboarding.android;
+package com.example.myapp;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

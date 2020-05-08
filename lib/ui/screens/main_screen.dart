@@ -1,12 +1,30 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onboarding_flow/business/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:onboarding_flow/models/user.dart';
+import 'package:onboarding_flow/ui/pages/homepage.dart';
+import 'package:onboarding_flow/ui/model/CityModel.dart';
+import 'package:http/http.dart' as http;
+import 'package:onboarding_flow/ui/screens/UserLike.dart';
+import 'package:onboarding_flow/ui/screens/Feedback.dart';
+import 'package:onboarding_flow/ui/screens/sign_in_screen.dart';
+import 'package:onboarding_flow/ui/screens/welcome_screen.dart';
+
+import '../../Filters.dart';
 
 class MainScreen extends StatefulWidget {
-  final FirebaseUser firebaseUser;
 
-  MainScreen({this.firebaseUser});
+  bool showlogout;
+  MainScreen(bool bool){
+
+    showlogout=bool;
+  }
+
+
+
 
   _MainScreenState createState() => _MainScreenState();
 }
@@ -17,14 +35,35 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    print(widget.firebaseUser);
+
   }
+  Future<String> getUID() async {
+    final FirebaseUser u = await FirebaseAuth.instance.currentUser();
+
+    return u.uid;
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       key: _scaffoldKey,
       appBar: new AppBar(
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right:8.0),
+            child: SizedBox(
+              width:40,
+              height:40,
+              child: Image(
+
+                image:   AssetImage("assets/newicon.png") ,
+              ),
+            ),
+          )
+
+        ],
         elevation: 0.5,
         leading: new IconButton(
             icon: new Icon(Icons.menu),
@@ -33,60 +72,91 @@ class _MainScreenState extends State<MainScreen> {
         centerTitle: true,
       ),
       drawer: Drawer(
+
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
-              child: Text('Drawer Header'),
+            new UserAccountsDrawerHeader(
+              decoration: BoxDecoration(color: Colors.white),
+              currentAccountPicture: new CircleAvatar(
+                radius: 50.0,
+                backgroundColor: const Color(0xFF778899),
+                backgroundImage:
+                AssetImage("assets/newicon.png") ,
+              ),
             ),
+//            AssetImage("assets/newicon.png")
             ListTile(
-              title: Text('Log Out'),
+              title: Text('Saved trips'),
               onTap: () {
-                _logOut();
-                _scaffoldKey.currentState.openEndDrawer();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>
+                        UserLike())
+                );
               },
             ),
+            ListTile(
+              title: Text('Feeback'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>
+                        UserFeedback())
+                );
+              },
+            ),
+            widget.showlogout?    ListTile(
+              title: Text('Log out'),
+              onTap: () async {
+                _logOut();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>
+                        WelcomeScreen())
+                );
+
+
+              },
+            ):   ListTile(
+              title: Text('Log in'),
+              onTap: () async {
+                Navigator.of(context).pushNamed("/signin");
+
+              },
+            )
           ],
         ),
       ),
-      body: StreamBuilder(
-        stream: Auth.getUser(widget.firebaseUser.uid),
-        builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(
-                valueColor: new AlwaysStoppedAnimation<Color>(
-                  Color.fromRGBO(212, 20, 15, 1.0),
-                ),
-              ),
-            );
-          } else {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    height: 100.0,
-                    width: 100.0,
-                    child: CircleAvatar(
-                      backgroundImage: (snapshot.data.profilePictureURL != '')
-                          ? NetworkImage(snapshot.data.profilePictureURL)
-                          : AssetImage("assets/images/default.png"),
-                    ),
-                  ),
-                  Text("Name: ${snapshot.data.firstName}"),
-                  Text("Email: ${snapshot.data.email}"),
-                  Text("UID: ${snapshot.data.userID}"),
-                ],
-              ),
-            );
-          }
-        },
-      ),
-    );
-  }
+      body:
 
+
+
+
+                CheckboxWidget()
+
+
+
+
+
+
+
+    );
+
+  }
+  Future<CityModel> fetchAlbum() async {
+    final response = await http.get('https://jsonplaceholder.typicode.com/albums/1');
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      return CityModel.fromJson(json.decode(response.body));
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
   void _logOut() async {
     Auth.signOut();
   }

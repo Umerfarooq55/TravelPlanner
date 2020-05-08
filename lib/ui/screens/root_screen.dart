@@ -16,12 +16,12 @@ class _RootScreenState extends State<RootScreen> {
       builder: (BuildContext context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return new Container(
-            color: Colors.white,
+            color:  Color(0xff6495ED),
           );
         } else {
           if (snapshot.hasData) {
             return new MainScreen(
-              firebaseUser: snapshot.data,
+             true
             );
           } else {
             return WelcomeScreen();
