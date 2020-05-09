@@ -206,6 +206,12 @@
       "languageVersion": "2.0"
     },
     {
+      "name": "flutter_keyboard_visibility",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/flutter_keyboard_visibility-0.7.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.2"
+    },
+    {
       "name": "flutter_page_indicator",
       "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/flutter_page_indicator-0.0.3",
       "packageUri": "lib/",
@@ -404,6 +410,12 @@
       "languageVersion": "2.6"
     },
     {
+      "name": "search_widget",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/search_widget-1.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.2"
+    },
+    {
       "name": "shared_preferences",
       "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/shared_preferences-0.5.7",
       "packageUri": "lib/",
@@ -572,7 +584,7 @@
       "languageVersion": "2.0"
     }
   ],
-  "generated": "2020-05-05T02:34:52.964517Z",
+  "generated": "2020-05-08T23:40:18.161355Z",
   "generator": "pub",
   "generatorVersion": "2.8.0-dev.5.0.flutter-fc3af737c7"
 }

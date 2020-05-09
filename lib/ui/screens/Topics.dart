@@ -10,6 +10,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:search_widget/search_widget.dart';
 
 import '../../data.dart';
 
@@ -26,12 +27,12 @@ class TopicsState extends State {
     'Cherry': false,
     'Mango': false,
     'Orange': false,
-
   };
-  List list =[142,150];
-  List list2 =  ["umer","umer"];
+  List list = [142, 150];
+  List list2 = ["umer", "umer"];
   var tmpArray = [];
   var tmpArray2 = [];
+  var showSubtopics = false;
   var counter;
   bool showworld = false;
   List<Data> subtopicsList = new List();
@@ -42,6 +43,9 @@ class TopicsState extends State {
   var obj = new Map<dynamic, dynamic>();
   var Mainmap = new Map<dynamic, dynamic>();
   var firstColor = Color(0xff141e30), secondColor = Color(0xff243b55);
+  FirebaseAnalytics analytics = FirebaseAnalytics();
+  String CurrentTopic="assets/topic_one.png";
+
   List getCheckboxItems() {
     var tmpArray = [];
     var tmpArray2 = [];
@@ -92,28 +96,23 @@ class TopicsState extends State {
     return tmpArray2;
   }
 
-  @override
-  void initState() {}
-  FirebaseAnalytics analytics = FirebaseAnalytics();
+Future<void> _sendAnalyticsEvent(String name) async {
+  await analytics.logEvent(
+    name: 'Subtopics',
+    parameters: <String, dynamic>{
+      'subtopic': name,
+    },
+  );
+}
 
-  Future<void> _sendAnalyticsEvent(String name) async {
-    await analytics.logEvent(
-      name: 'Subtopics',
-      parameters: <String, dynamic>{
-        'subtopic': name,
-      },
-    );
-  }
-
-  Future<void> _sendAnalyticsEventshowcities(String name) async {
-    await analytics.logEvent(
-      name: 'ShowCities',
-      parameters: <String, dynamic>{
-        'clickonshoecities': "yes",
-      },
-    );
-  }
-
+Future<void> _sendAnalyticsEventshowcities(String name) async {
+  await analytics.logEvent(
+    name: 'ShowCities',
+    parameters: <String, dynamic>{
+      'clickonshoecities': "yes",
+    },
+  );
+}
   @override
   Widget build(BuildContext context) {
 //
@@ -205,91 +204,37 @@ class TopicsState extends State {
                       ],
                     ),
 //
-                    UnSelect(),
+                    showSubtopics?UnSelect():    Select(),
                     Padding(
-                      padding: const EdgeInsets.only(top:12.0),
+                      padding: const EdgeInsets.only(top: 12.0),
                       child: Center(
                         child: NiceButton(
-elevation: 10,
+                          elevation: 10,
                           radius: 20,
                           padding: const EdgeInsets.all(15),
-                          text: showworld?"Off World ?":"Show World ? ",
+                          text: showworld ? "Off World ?" : "Show World ? ",
                           gradientColors: [secondColor, firstColor],
                           onPressed: () {
-
-  setState(() {
-    if(showworld) {
-      showworld = false;
-    }else{
-      showworld = true;
-    }
-  });
+                            setState(() {
+                              if (showworld) {
+                                showworld = false;
+                              } else {
+                                showworld = true;
+                              }
+                            });
                           },
                         ),
                       ),
                     ),
-                   showworld? WorlSearch():Container()
-
+                    showworld ? WorlSearch() : Container()
                   ],
                 ),
 
-//        SingleChildScrollView(
-//          child: Column(
 //
-//            children: <Widget>[
-//              MainHeadingCards(),
-//              ProjectTiles()
-//            ],
-//
-//          ),
-//        ),
-
-//        Align(
-//          alignment: Alignment.bottomRight,
-//
-//          child: Padding(
-//            padding: const EdgeInsets.only(bottom:25.0,right: 22.0),
-//            child: Container(
-//
-//              child: FloatingActionButton.extended(
-//                onPressed: () {
-//                  _sendAnalyticsEventshowcities("");
-//                  List list = getCheckboxItems();
-//                  List list2 =  getCheckboxnames();
-//                  list2.forEach((element) {
-//                    _sendAnalyticsEvent(element);
-//                  });
-//                  if(list.length>0){
-//
-//                    Navigator.push(
-//                        context,
-//                        MaterialPageRoute(builder: (context) =>
-//                            HomePage(list,list2))
-//                    );
-//                  }else{
-//                    Fluttertoast.showToast(
-//                        msg: "please select things to do so we can show you relevant cities.",
-//                        toastLength: Toast.LENGTH_SHORT,
-//                        gravity: ToastGravity.BOTTOM,
-//                        timeInSecForIosWeb: 1,
-//                        backgroundColor: Colors.red,
-//                        textColor: Colors.white,
-//                        fontSize: 16.0
-//                    );
-//                  }
-//                  // Add your onPressed code here!
-//                },
-//                label: Text("Show Cities",style: TextStyle(color: Colors.white),),
-//                icon: Icon(Icons.navigate_next,color: Colors.white,),
-//                backgroundColor: Colors.redAccent,
-//              ),
-//            ),
-//          ),
-//        ),
               ],
             ),
           ),
-    HomePageWithoutAppbar(list,list2),
+          HomePageWithoutAppbar(list, list2),
         ],
       ),
     );
@@ -297,136 +242,83 @@ elevation: 10,
 
   Padding WorlSearch() {
     return Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.white70, width: 5),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      semanticContainer: true,
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    bottom: 30, left: 5, top: 10),
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(color: Colors.white70, width: 5),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  semanticContainer: true,
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  elevation: 20,
-                                  child: Container(
-                                    height: 35,
-                                    width: 160,
-                                    decoration: new BoxDecoration(
-                                        color: Colors.deepOrange,
-                                        shape: BoxShape.rectangle,
-                                        borderRadius:
-                                        BorderRadius.all(Radius.circular(12.0))),
-                                    child: Center(
-                                      child: Text(
-                                        "In tutto ill mudo?",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.normal),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    bottom: 20, left: 80, top: 10),
-                                child: Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: new BoxDecoration(
-                                    color: Colors.grey,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                      child: Icon(
-                                        Icons.arrow_downward,
-                                        color: Colors.white,
-                                      )),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                bottom: 0, left: 5, top: 0),
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.white70, width: 5),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              semanticContainer: true,
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              elevation: 20,
-                              child: Container(
-                                height: 35,
-                                width: 160,
-                                decoration: new BoxDecoration(
-                                    color: Colors.deepOrange,
-                                    shape: BoxShape.rectangle,
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(12.0))),
-                                child: Center(
-                                  child: Text(
-                                    "Place with distance?",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 10, left: 50, right: 50),
-                            alignment: Alignment.centerLeft,
-                            child: FlutterSlider(
-                              values: [30, 60],
-                              rangeSlider: true,
-                              max: 100,
-                              min: 0,
-                              visibleTouchArea: false,
-                              trackBar: FlutterSliderTrackBar(
-                                inactiveTrackBarHeight: 14,
-                                activeTrackBarHeight: 10,
-                                inactiveTrackBar: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Colors.black12,
-                                  border: Border.all(width: 3, color: Colors.blue),
-                                ),
-                                activeTrackBar: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4),
-                                    color: Colors.blue.withOpacity(0.5)),
-                              ),
-                              onDragging: (handlerIndex, lowerValue, upperValue) {
-                                _lowerValue = lowerValue;
-                                _upperValue = upperValue;
-                                setState(() {});
-                              },
-                            ),
-                          ),
-                        ],
+      padding: const EdgeInsets.all(18.0),
+      child: Card(
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.white70, width: 5),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        semanticContainer: true,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            HomePage(),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 0, left: 5, top: 0),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.white70, width: 5),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  semanticContainer: true,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  elevation: 20,
+                  child: Container(
+                    height: 35,
+                    width: 160,
+                    decoration: new BoxDecoration(
+                        color: Colors.deepOrange,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.all(Radius.circular(12.0))),
+                    child: Center(
+                      child: Text(
+                        "Place with distance?",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.normal),
                       ),
                     ),
-                  );
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 10, left: 50, right: 50),
+              alignment: Alignment.centerLeft,
+              child: FlutterSlider(
+                values: [30, 60],
+                rangeSlider: true,
+                max: 100,
+                min: 0,
+                visibleTouchArea: false,
+                trackBar: FlutterSliderTrackBar(
+                  inactiveTrackBarHeight: 14,
+                  activeTrackBarHeight: 10,
+                  inactiveTrackBar: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.black12,
+                    border: Border.all(width: 3, color: Colors.blue),
+                  ),
+                  activeTrackBar: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: Colors.blue.withOpacity(0.5)),
+                ),
+                onDragging: (handlerIndex, lowerValue, upperValue) {
+                  _lowerValue = lowerValue;
+                  _upperValue = upperValue;
+                  setState(() {});
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget UnSelect() {
@@ -434,224 +326,36 @@ elevation: 10,
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-
         Padding(
           padding: const EdgeInsets.only(left: 30, top: 10),
-          child: Card(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.white70, width: 5),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            semanticContainer: true,
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            elevation: 20,
-            child: Image(
-              fit: BoxFit.fill,
-              image: AssetImage("assets/topic_six.png"),
-              width: 89,
-              height: 90,
+          child: GestureDetector(
+            onTap: (){
+              setState(() {
+                showSubtopics=false;
+
+              });
+            },
+            child: Card(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.white70, width: 5),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              semanticContainer: true,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              elevation: 20,
+              child: Image(
+                fit: BoxFit.fill,
+                image: AssetImage(CurrentTopic),
+                width: 89,
+                height: 90,
+              ),
             ),
           ),
         ),
-        Wrap(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left: 30, top: 10),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.white70, width: 5),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                semanticContainer: true,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                elevation: 20,
-                child: Container(
-                  height: 40,
-                  width: 120,
-                  decoration: new BoxDecoration(
-                      color: Colors.deepOrange,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.all(Radius.circular(4.0))),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          "topic 00",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.normal),
-                        ),
-                        Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 30, top: 10),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.white70, width: 5),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                semanticContainer: true,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                elevation: 20,
-                child: Container(
-                  height: 40,
-                  width: 120,
-                  decoration: new BoxDecoration(
-                      color: Colors.deepOrange,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.all(Radius.circular(4.0))),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          "topic 10",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.normal),
-                        ),
-                        Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 30, top: 10),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.white70, width: 5),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                semanticContainer: true,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                elevation: 20,
-                child: Container(
-                  height: 40,
-                  width: 180,
-                  decoration: new BoxDecoration(
-                      color: Colors.deepOrange,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.all(Radius.circular(4.0))),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          "subtopic 1",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.normal),
-                        ),
-                        Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 30, top: 10),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.white70, width: 5),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                semanticContainer: true,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                elevation: 20,
-                child: Container(
-                  height: 40,
-                  width: 140,
-                  decoration: new BoxDecoration(
-                      color: Colors.deepOrange,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.all(Radius.circular(4.0))),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          "subtopic 0",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.normal),
-                        ),
-                        Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 30, top: 10),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.white70, width: 5),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                semanticContainer: true,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                elevation: 20,
-                child: Container(
-                  height: 40,
-                  width: 110,
-                  decoration: new BoxDecoration(
-                      color: Colors.deepOrange,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.all(Radius.circular(4.0))),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          "topic",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.normal),
-                        ),
-                        Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+    Container(
+      height: 250,
+      child:Subtopics()
+    ),
         Column(
           children: <Widget>[
             SingleChildScrollView(
@@ -663,55 +367,81 @@ elevation: 10,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.only(left: 8, top: 10),
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.white70, width: 5),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        semanticContainer: true,
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        elevation: 5,
-                        child: Image(
-                          fit: BoxFit.fill,
-                          image: AssetImage("assets/topic_one.png"),
-                          width: 80,
-                          height: 80,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8, top: 10),
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.white70, width: 5),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        semanticContainer: true,
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        elevation: 5,
-                        child: Image(
-                          fit: BoxFit.fill,
-                          image: AssetImage("assets/topic_two.png"),
-                          width: 80,
-                          height: 80,
+                      child: GestureDetector(
+                        onTap: (){
+                          setState(() {
+                            showSubtopics=true;
+                         CurrentTopic =  "assets/topic_one.png";
+                          });
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white70, width: 5),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          elevation: 5,
+                          child: Image(
+                            fit: BoxFit.fill,
+                            image: AssetImage("assets/topic_one.png"),
+                            width: 80,
+                            height: 80,
+                          ),
                         ),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 8, top: 10),
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.white70, width: 5),
-                          borderRadius: BorderRadius.circular(10),
+                      child: GestureDetector(
+                        onTap: (){
+                          setState(() {
+                            showSubtopics=true;
+                            CurrentTopic =  "assets/topic_two.png";
+                          });
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white70, width: 5),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          elevation: 5,
+                          child: Image(
+                            fit: BoxFit.fill,
+                            image: AssetImage("assets/topic_two.png"),
+                            width: 80,
+                            height: 80,
+                          ),
                         ),
-                        semanticContainer: true,
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        elevation: 5,
-                        child: Image(
-                          fit: BoxFit.fill,
-                          image: AssetImage("assets/topic_three.png"),
-                          width: 80,
-                          height: 80,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8, top: 10),
+                      child: GestureDetector(
+                        onTap: (){
+                          setState(() {
+                            showSubtopics=true;
+
+                                CurrentTopic =  "assets/topic_three.png";
+
+                          });
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white70, width: 5),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          elevation: 5,
+                          child: Image(
+                            fit: BoxFit.fill,
+                            image: AssetImage("assets/topic_three.png"),
+                            width: 80,
+                            height: 80,
+                          ),
                         ),
                       ),
                     ),
@@ -727,38 +457,80 @@ elevation: 10,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-                  padding: const EdgeInsets.only(left: 8, top: 10),
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.white70, width: 5),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        semanticContainer: true,
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        elevation: 5,
-                        child: Image(
-                          fit: BoxFit.fill,
-                          image: AssetImage("assets/topic_four.png"),
-                          width: 80,
-                          height: 80,
+                      padding: const EdgeInsets.only(left: 8, top: 10),
+                      child: GestureDetector(
+                        onTap: (){
+                          setState(() {
+                            showSubtopics=true;
+                            CurrentTopic =  "assets/topic_four.png";
+                          });
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white70, width: 5),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          elevation: 5,
+                          child: Image(
+                            fit: BoxFit.fill,
+                            image: AssetImage("assets/topic_four.png"),
+                            width: 80,
+                            height: 80,
+                          ),
                         ),
                       ),
                     ),
                     Padding(
-    padding: const EdgeInsets.only(left: 8, top: 10),
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.white70, width: 5),
-                          borderRadius: BorderRadius.circular(10),
+                      padding: const EdgeInsets.only(left: 26, top: 10),
+                      child: GestureDetector(
+                        onTap: (){
+                        setState(() {
+                          showSubtopics=true;
+                          CurrentTopic =  "assets/topic_fie.png";
+                        });
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white70, width: 5),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          elevation: 5,
+                          child: Image(
+                            fit: BoxFit.fill,
+                            image: AssetImage("assets/topic_fie.png"),
+                            width: 80,
+                            height: 80,
+                          ),
                         ),
-                        semanticContainer: true,
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        elevation: 5,
-                        child: Image(
-                          fit: BoxFit.fill,
-                          image: AssetImage("assets/topic_fie.png"),
-                          width: 80,
-                          height: 80,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 26, top: 10),
+                      child: GestureDetector(
+                        onTap: (){
+                          setState(() {
+                            showSubtopics=true;
+                            CurrentTopic =  "assets/topic_six.png";
+                          });
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white70, width: 5),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          elevation: 5,
+                          child: Image(
+                            fit: BoxFit.fill,
+                            image: AssetImage("assets/topic_six.png"),
+                            width: 80,
+                            height: 80,
+                          ),
                         ),
                       ),
                     ),
@@ -783,55 +555,80 @@ elevation: 10,
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 10),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.white70, width: 5),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    elevation: 5,
-                    child: Image(
-                      fit: BoxFit.fill,
-                      image: AssetImage("assets/topic_one.png"),
-                      width: 80,
-                      height: 80,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, top: 10),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.white70, width: 5),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    elevation: 5,
-                    child: Image(
-                      fit: BoxFit.fill,
-                      image: AssetImage("assets/topic_two.png"),
-                      width: 80,
-                      height: 80,
+                  child: GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        showSubtopics=true;
+                      CurrentTopic = "assets/topic_one.png";
+                      });
+
+                    },
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.white70, width: 5),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation: 5,
+                      child: Image(
+                        fit: BoxFit.fill,
+                        image: AssetImage("assets/topic_one.png"),
+                        width: 80,
+                        height: 80,
+                      ),
                     ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 10),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.white70, width: 5),
-                      borderRadius: BorderRadius.circular(10),
+                  child: GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        showSubtopics=true;
+                        CurrentTopic = "assets/topic_two.png";
+                      });
+                    },
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.white70, width: 5),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation: 5,
+                      child: Image(
+                        fit: BoxFit.fill,
+                        image: AssetImage("assets/topic_two.png"),
+                        width: 80,
+                        height: 80,
+                      ),
                     ),
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    elevation: 5,
-                    child: Image(
-                      fit: BoxFit.fill,
-                      image: AssetImage("assets/topic_three.png"),
-                      width: 80,
-                      height: 80,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8, top: 10),
+                  child: GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        showSubtopics=true;
+                        CurrentTopic = "assets/topic_three.png";
+                      });
+                    },
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.white70, width: 5),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation: 5,
+                      child: Image(
+                        fit: BoxFit.fill,
+                        image: AssetImage("assets/topic_three.png"),
+                        width: 80,
+                        height: 80,
+                      ),
                     ),
                   ),
                 ),
@@ -847,55 +644,79 @@ elevation: 10,
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 10),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.white70, width: 5),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    elevation: 5,
-                    child: Image(
-                      fit: BoxFit.fill,
-                      image: AssetImage("assets/topic_four.png"),
-                      width: 80,
-                      height: 80,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, top: 10),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.white70, width: 5),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    elevation: 20,
-                    child: Image(
-                      fit: BoxFit.fill,
-                      image: AssetImage("assets/topic_fie.png"),
-                      width: 80,
-                      height: 80,
+                  child: GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        showSubtopics=true;
+                        CurrentTopic = "assets/topic_four.png";
+                      });
+                    },
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.white70, width: 5),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation: 5,
+                      child: Image(
+                        fit: BoxFit.fill,
+                        image: AssetImage("assets/topic_four.png"),
+                        width: 80,
+                        height: 80,
+                      ),
                     ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 10),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.white70, width: 5),
-                      borderRadius: BorderRadius.circular(10),
+                  child: GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        showSubtopics=true;
+                        CurrentTopic = "assets/topic_fie.png";
+                      });
+                    },
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.white70, width: 5),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation: 20,
+                      child: Image(
+                        fit: BoxFit.fill,
+                        image: AssetImage("assets/topic_fie.png"),
+                        width: 80,
+                        height: 80,
+                      ),
                     ),
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    elevation: 5,
-                    child: Image(
-                      fit: BoxFit.fill,
-                      image: AssetImage("assets/topic_six.png"),
-                      width: 80,
-                      height: 80,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8, top: 10),
+                  child: GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        showSubtopics=true;
+                        CurrentTopic = "assets/topic_six.png";
+                      });
+                    },
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.white70, width: 5),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation: 5,
+                      child: Image(
+                        fit: BoxFit.fill,
+                        image: AssetImage("assets/topic_six.png"),
+                        width: 80,
+                        height: 80,
+                      ),
                     ),
                   ),
                 ),
@@ -972,6 +793,277 @@ elevation: 10,
         ));
   }
 
+//  Widget ProjectTiles() {
+//    List bar;
+//    return FutureBuilder(
+//        future: Fetchsubtopics(),
+//        builder: (BuildContext context, AsyncSnapshot<List<Data>> dataList) {
+//          if (firsttime) {
+//            if (!dataList.hasData)
+//              return Padding(
+//                padding: const EdgeInsets.only(top: 28.0),
+//                child: Center(
+//                  child: CircularProgressIndicator(
+//                    backgroundColor: Colors.amber,
+//                  ),
+//                ),
+//              );
+//          }
+//          return SingleChildScrollView(
+//            physics: ScrollPhysics(),
+//            child: Wrap(children: <Widget>[
+//              ListView.builder(
+//                  shrinkWrap: true,
+//                  physics:  NeverScrollableScrollPhysics(), // new
+//                  itemCount: subtopicsList.length,
+//                  itemBuilder: (context, i) {
+//                    var counter=0;
+//                    print("ListView" + subtopicsList.length.toString());
+//                       return Column(
+//                         mainAxisAlignment: MainAxisAlignment.start,
+//                          crossAxisAlignment: CrossAxisAlignment.start,
+//                          children: subtopicsList[i]
+//                              .contents
+//                              .keys
+//                              .map((String key) {
+//                            return CheckboxListTile(
+//                              title: new Text(
+//                                "$key",
+//                                style: TextStyle(
+//                                  shadows: [
+//                                    Shadow(
+//                                      blurRadius: 110,
+//                                      color: Colors.grey,
+//                                      offset: Offset(4.0, 4.0),
+//                                    ),
+//                                  ],
+//                                ),
+//                              ),
+//                              value: subtopicsList[i].contents[key]['alue'],
+//                              activeColor: Colors.pink,
+//                              checkColor: Colors.white,
+//                              onChanged: (bool value) {
+////
+//                                if (MainHeading.length == 6) {
+//                                  Scaffold.of(context)
+//                                      .showSnackBar(new SnackBar(
+//                                    content: new Text(
+//                                        "you reached the max number of filters. remove some filters to add new ones"),
+//                                  ));
+//                                }
+//                                setState(() {
+//                                  subtopicsList[i].contents[key]['alue'] =
+//                                      value;
+//                                  firsttime = false;
+//                                  showtext = false;
+//                                });
+//                              },
+//                            );
+//                          }).toList(),
+//                       );
+//
+//                  })
+//            ]),
+//          );
+//        });
+//  }
+
+
+}
+
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<LeaderBoard> list = <LeaderBoard>[
+    LeaderBoard("Italy", 54),
+    LeaderBoard("Spain", 22.5),
+    LeaderBoard("London", 24.7),
+    LeaderBoard("Sweden", 22.1),
+  ];
+
+  LeaderBoard _selectedItem;
+
+  bool _show = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Column(
+        children: <Widget>[
+          const SizedBox(
+            height: 16,
+          ),
+          SearchWidget<LeaderBoard>(
+            dataList: list,
+            hideSearchBoxWhenItemSelected: false,
+            listContainerHeight: MediaQuery.of(context).size.height / 4,
+            queryBuilder: (query, list) {
+              return list
+                  .where((item) =>
+                      item.username.toLowerCase().contains(query.toLowerCase()))
+                  .toList();
+            },
+            popupListItemBuilder: (item) {
+              return PopupListItemWidget(item);
+            },
+            selectedItemBuilder: (selectedItem, deleteSelectedItem) {
+//                  return SelectedItemWidget(selectedItem, deleteSelectedItem);
+            },
+            // widget customization
+            noItemsFoundWidget: NoItemsFound(),
+            textFieldBuilder: (controller, focusNode) {
+              return MyTextField(controller, focusNode);
+            },
+            onItemSelected: (item) {
+              setState(() {
+                _selectedItem = item;
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class LeaderBoard {
+  LeaderBoard(this.username, this.score);
+
+  final String username;
+  final double score;
+}
+
+class SelectedItemWidget extends StatelessWidget {
+  const SelectedItemWidget(this.selectedItem, this.deleteSelectedItem);
+
+  final LeaderBoard selectedItem;
+  final VoidCallback deleteSelectedItem;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: 2,
+        horizontal: 4,
+      ),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 8,
+                bottom: 8,
+              ),
+              child: Text(
+                selectedItem.username,
+                style: const TextStyle(fontSize: 14),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.delete_outline, size: 22),
+            color: Colors.grey[700],
+            onPressed: deleteSelectedItem,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MyTextField extends StatelessWidget {
+  const MyTextField(this.controller, this.focusNode);
+
+  final TextEditingController controller;
+  final FocusNode focusNode;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: TextField(
+        controller: controller,
+        focusNode: focusNode,
+        style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+        decoration: InputDecoration(
+          enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Color(0x4437474F),
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor),
+          ),
+          suffixIcon: Icon(Icons.search),
+          border: InputBorder.none,
+          hintText: "Search here...",
+          contentPadding: const EdgeInsets.only(
+            left: 16,
+            right: 20,
+            top: 14,
+            bottom: 14,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class NoItemsFound extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Icon(
+          Icons.folder_open,
+          size: 24,
+          color: Colors.grey[900].withOpacity(0.7),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          "No Items Found",
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey[900].withOpacity(0.7),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class PopupListItemWidget extends StatelessWidget {
+  const PopupListItemWidget(this.item);
+
+  final LeaderBoard item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      child: Text(
+        item.username,
+        style: const TextStyle(fontSize: 16),
+      ),
+    );
+  }
+}
+class Subtopics extends StatefulWidget {
+  @override
+  _SubtopicsState createState() => _SubtopicsState();
+}
+
+class _SubtopicsState extends State<Subtopics> {
+  bool firsttime = true;
+  List<Data> subtopicsList = new List();
+
   Widget ProjectTiles() {
     List bar;
     return FutureBuilder(
@@ -990,104 +1082,69 @@ elevation: 10,
           }
           return SingleChildScrollView(
             physics: ScrollPhysics(),
-            child: Column(
-              children: <Widget>[
-                Wrap(children: <Widget>[
-                  ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(), // new
-                      itemCount: subtopicsList.length,
-                      itemBuilder: (context, i) {
-                        print("ListView" + subtopicsList.length.toString());
-//                           bar =    dataList[i]['childs'];
-                        return ExpansionTile(
-                          title: Text(
-                            subtopicsList[i].title,
-                            style: TextStyle(
+            child: Padding(
+              padding: const EdgeInsets.only(left:18.0,right: 18.0),
+              child: Wrap(children: <Widget>[
+                ListView.builder(
+                    shrinkWrap: true,
+                    physics:  NeverScrollableScrollPhysics(), // new
+                    itemCount: subtopicsList.length,
+                    itemBuilder: (context, i) {
+                      var counter=0;
+                      print("ListView" + subtopicsList.length.toString());
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: subtopicsList[i]
+                            .contents
+                            .keys
+                            .map((String key) {
+                          return CheckboxListTile(
+                            title: new Text(
+                              "$key",
+                              style: TextStyle(
                                 shadows: [
                                   Shadow(
                                     blurRadius: 110,
                                     color: Colors.grey,
-                                    offset: Offset(1.0, 1.0),
+                                    offset: Offset(4.0, 4.0),
                                   ),
                                 ],
-                                fontSize: 22.0,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.normal,
-                                color: Colors.red),
-                          ),
-                          children: <Widget>[
-                            Column(
-                              children: subtopicsList[i]
-                                  .contents
-                                  .keys
-                                  .map((String key) {
-                                return CheckboxListTile(
-                                  title: new Text(
-                                    "$key",
-                                    style: TextStyle(
-                                      shadows: [
-                                        Shadow(
-                                          blurRadius: 110,
-                                          color: Colors.grey,
-                                          offset: Offset(4.0, 4.0),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  value: subtopicsList[i].contents[key]['alue'],
-                                  activeColor: Colors.pink,
-                                  checkColor: Colors.white,
-                                  onChanged: (bool value) {
+                              ),
+                            ),
+                            value: subtopicsList[i].contents[key]['alue'],
+                            activeColor: Colors.pink,
+                            checkColor: Colors.white,
+                            onChanged: (bool value) {
 //
-                                    if (MainHeading.length == 6) {
-                                      Scaffold.of(context)
-                                          .showSnackBar(new SnackBar(
-                                        content: new Text(
-                                            "you reached the max number of filters. remove some filters to add new ones"),
-                                      ));
-                                    }
-                                    setState(() {
-                                      subtopicsList[i].contents[key]['alue'] =
-                                          value;
-                                      firsttime = false;
-                                      showtext = false;
-
-//                                                vehicles[i].contents[key][0] =
-//                                                    value;
-//                                                if (value) {
-//                                                  MainHeading.add("$key");
-//                                                } else {
-//                                                  MainHeading.removeAt(i);
-//                                                }
-////                            if(counter==7){
-//                              Scaffold.of(context).showSnackBar(new SnackBar(
-//                                content: new Text("Limit is full"),
+//                            if (MainHeading.length == 6) {
+//                              Scaffold.of(context)
+//                                  .showSnackBar(new SnackBar(
+//                                content: new Text(
+//                                    "you reached the max number of filters. remove some filters to add new ones"),
 //                              ));
 //                            }
-                                    });
-                                  },
-                                );
-                              }).toList(),
-                            )
+                              setState(() {
+                                subtopicsList[i].contents[key]['alue'] =
+                                    value;
+                                firsttime = false;
+//                              showtext = false;
+                              });
+                            },
+                          );
+                        }).toList(),
+                      );
 
-//                                        print("End "+ subtopicsList.length.toString());
-//
-//                                  subtopicsList.add(
-//
-//                                      new Data(listresponse[i]['name'], Mainmap[i])
-//                                  );
-//                                        return Column(children: surveysList);
-                          ],
-                        );
-                      })
-                ])
-              ],
+                    })
+              ]),
             ),
           );
         });
   }
-
+  @override
+  Widget build(BuildContext context) {
+    return ProjectTiles();
+  }
   Future<List<Data>> Fetchsubtopics() async {
     if (firsttime) {
       var obj = new Map<dynamic, dynamic>();

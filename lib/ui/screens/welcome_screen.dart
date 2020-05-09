@@ -57,9 +57,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   void initState() {
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      dialog();
-    });
+//    Future.delayed(const Duration(milliseconds: 1000), () {
+//      dialog();
+//    });
   }
 }
 
