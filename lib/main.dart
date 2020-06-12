@@ -15,7 +15,7 @@ import 'package:onboarding_flow/ui/screens/main_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smartlook/smartlook.dart';
-import 'package:upgrader/upgrader.dart';
+
 import 'package:launch_review/launch_review.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) {

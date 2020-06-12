@@ -160,7 +160,7 @@ class _HomePageWithoutAppbarState extends State<HomePageWithoutAppbar> {
 
 
                                              ),
-                                             child: Hero(
+                                             child:detail.image!=null? Hero(
                                                tag: detail.image,
                                                child: Material(
                                                  color: Colors.transparent,
@@ -182,7 +182,7 @@ class _HomePageWithoutAppbarState extends State<HomePageWithoutAppbar> {
                                                    ),
                                                  ),
                                                ),
-                                             ),
+                                             ):Container(),
                                            )),
                                        Padding(
                                          padding: const EdgeInsets.only(

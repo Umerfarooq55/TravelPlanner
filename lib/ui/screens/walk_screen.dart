@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:device_id/device_id.dart';
+
 import 'package:flutter/material.dart';
 import "package:flutter_swiper/flutter_swiper.dart";
 import "package:onboarding_flow/models/walkthrough.dart";
@@ -223,7 +223,7 @@ class _WalkthroughScreenState extends State<WalkthroughScreen> {
   Future<String> getimei() async {
 
      print("GETIMEI");
-    String imei = await DeviceId.getID;
+    String imei = "IOS";
      print("GETIMEI:  "+imei);
     return imei;
   }

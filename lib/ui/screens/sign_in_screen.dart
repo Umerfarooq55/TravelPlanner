@@ -1,7 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import "package:flutter/material.dart";
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+
 import "package:onboarding_flow/ui/widgets/custom_text_field.dart";
 import 'package:onboarding_flow/business/auth.dart';
 import 'package:onboarding_flow/business/validator.dart';

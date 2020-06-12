@@ -58,7 +58,7 @@ class _MainScreenState extends State<MainScreen> {
               height:40,
               child: Image(
 
-                image:   AssetImage("assets/newicon.png") ,
+                image:   AssetImage("assets/newicon.jpg") ,
               ),
             ),
           )

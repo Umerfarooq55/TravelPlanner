@@ -17,7 +17,7 @@
     <application
         android:name="com.example.myapp.Application"
         android:label="Travel Planner"
-        android:icon="@mipmap/ic_launcher_new"
+        android:icon="@mipmap/launcher_icon"
         android:appComponentFactory="android.support.v4.app.CoreComponentFactory"
         tools:replace="android:appComponentFactory"
 

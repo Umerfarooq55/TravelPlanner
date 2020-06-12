@@ -1,6 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:device_id/device_id.dart';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:launch_review/launch_review.dart';
@@ -8,12 +8,6 @@ import 'package:onboarding_flow/ui/screens/NewHome.dart';
 import 'package:onboarding_flow/ui/screens/main_screen.dart';
 import 'package:onboarding_flow/ui/widgets/custom_flat_button.dart';
 import 'package:package_info/package_info.dart';
-import 'package:upgrader/upgrader.dart';
-
-
-
-
-
 
 
 class WelcomeScreen extends StatefulWidget {
@@ -57,9 +51,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   void initState() {
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      dialog();
-    });
+//    Future.delayed(const Duration(milliseconds: 1000), () {
+//      dialog();
+//    });
   }
 }
 
@@ -141,7 +135,9 @@ class Page extends StatelessWidget {
       if(!snapshot.hasData) Container();
          if(snapshot.data!=null){
            double currentmobileapp = double.parse( snapshot.data['current'].toString());
-           if(usermobileapp>=currentmobileapp){
+           print("currentmobile $currentmobileapp ");
+           print("currentmobile :: $usermobileapp");
+           if(2>=1){
              return Column(
                children: <Widget>[
                  Padding(
