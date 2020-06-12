@@ -17,9 +17,7 @@ const kGoogleApiKey = "AIzaSyB_gPmsFE9D0vnEcR5m5lGlwzBMLRaQBmA";
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
 
-
 class UserFeedback extends StatefulWidget {
-
 
 
   @override
@@ -34,11 +32,12 @@ class HomeState extends State<UserFeedback> {
   List<PlacesSearchResult> places = [];
   bool isLoading = false;
   String errorMessage;
-  int index =0;
+  int index = 0;
   final flutterWebViewPlugin = FlutterWebviewPlugin();
   StreamSubscription _onDestroy;
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-TextEditingController feedback = TextEditingController();
+  TextEditingController feedback = TextEditingController();
+
   Future<bool> _NaigateBack() {
     Navigator.pop(context);
   }
@@ -73,18 +72,18 @@ TextEditingController feedback = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomPadding:false,
+        resizeToAvoidBottomPadding: false,
 
         appBar: new AppBar(
           actions: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(right:8.0),
+              padding: const EdgeInsets.only(right: 8.0),
               child: SizedBox(
-                width:40,
-                height:40,
+                width: 40,
+                height: 40,
                 child: Image(
 
-                  image:   AssetImage("assets/newicon.png") ,
+                  image: AssetImage("assets/newicon.png"),
                 ),
               ),
             )
@@ -93,7 +92,7 @@ TextEditingController feedback = TextEditingController();
           title: Text("Feedback"),
           elevation: 0.5,
           leading: GestureDetector(
-            onTap: (){
+            onTap: () {
               Navigator.pop(context);
             },
             child: new IconButton(
@@ -104,120 +103,112 @@ TextEditingController feedback = TextEditingController();
         ),
         body: Container(
 
-          child:Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top:18.0),
-                child: Center(
-                  child: EmojiFeedback(
-                    currentIndex: 0,
-                  onChange: (afterindex){
-index= afterindex;
-
-                  }
-             ),
-                ),
+          child: Column(
+              children: <Widget>[
+          Padding(
+          padding: const EdgeInsets.only(top:18.0),
+          child: Center(
+            child: EmojiFeedback(
+                currentIndex: 0,
+                onChange: (afterindex) {
+                  index = afterindex;
+                }
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: TextFormField(
+            controller: feedback,
+            minLines: 10,
+            maxLines: 15,
+            autocorrect: false,
+            decoration: InputDecoration(
+              hintText: 'Write your feedback here',
+              filled: true,
+              fillColor: Color(0xFFDBEDFF),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                borderSide: BorderSide(color: Colors.grey),
               ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: TextFormField(
-                  controller: feedback,
-                  minLines: 10,
-                  maxLines: 15,
-                  autocorrect: false,
-                  decoration: InputDecoration(
-                    hintText: 'Write your feedback here',
-                    filled: true,
-                    fillColor: Color(0xFFDBEDFF),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(color: Colors.grey),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(color: Colors.grey),
-                    ),
-                  ),
-                ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                borderSide: BorderSide(color: Colors.grey),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top:18.0),
-                child: NiceButton(
-                  width: 255,
-                  elevation: 8.0,
-                  radius: 52.0,
-                  text: "Submit",
-                  background: Colors.red,
-                  onPressed: () async {
-    final FirebaseUser u = await FirebaseAuth.instance.currentUser();
-                   if(u!=null){
-                     Firestore.instance
-                         .collection("Feedback")
-                         .document(u.uid)
-                         .setData(
-                         {
-                           "feedback":feedback.text,
-                           "Emojii":index
-                         }
-                     );
+            ),
+          ),
+        ),
+        Padding(
+        padding: const EdgeInsets.only(top:18.0),
+    child: NiceButton(
+    width: 255,
+    elevation: 8.0,
+    radius: 52.0,
+    text: "Submit",
+    background: Colors.red,
+    onPressed: () async {
+      final FirebaseUser u = await FirebaseAuth.instance.currentUser();
+      if (u != null) {
+        Firestore.instance
+            .collection("Feedback")
+            .document(u.uid)
+            .setData(
+            {
+              "feedback": feedback.text,
+              "Emojii": index
+            }
+        );
 
 
-                     Future.delayed(const Duration(milliseconds: 1000), (
+        Future.delayed(const Duration(milliseconds: 1000), () {
+          Fluttertoast.showToast(
+              msg: "We received your feedback. Thank you",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
+          Future.delayed(const Duration(milliseconds: 1000), () {
+            Navigator.pop(context);
+          });
+        });
+      } else {
+        Firestore.instance
+            .collection("Feedback")
+            .document(feedback.text.length.toString())
+            .setData(
+            {
+              "feedback": feedback.text,
+              "Emojii": index
+            }
+        );
 
 
-                         ) {
-
-                       Fluttertoast.showToast(
-                           msg: "We received your feedback. Thank you",
-                           toastLength: Toast.LENGTH_SHORT,
-                           gravity: ToastGravity.BOTTOM,
-                           timeInSecForIosWeb: 1,
-                           backgroundColor: Colors.green,
-                           textColor: Colors.white,
-                           fontSize: 16.0
-                       );
-                       Future.delayed(const Duration(milliseconds: 1000), (
-
-
-                           ) {
-
-                         Navigator.pop(context);
-                       });
-                     });
-
-
-                   }else{
-                     Fluttertoast.showToast(
-                         msg: "You must be logged in to to leave your feedback.",
-                         toastLength: Toast.LENGTH_SHORT,
-                         gravity: ToastGravity.BOTTOM,
-                         timeInSecForIosWeb: 1,
-                         backgroundColor: Colors.red,
-                         textColor: Colors.white,
-                         fontSize: 16.0
-                     );
-
-                     Future.delayed(const Duration(milliseconds: 1000), () {
-
-// Here you can write your code
-                       Navigator.push(
-                           context,
-                           MaterialPageRoute(builder: (context) =>
-                               WelcomeScreen())
-                       );
-                     });
-
-                   }
+        Future.delayed(const Duration(milliseconds: 1000), () {
+          Fluttertoast.showToast(
+              msg: "We received your feedback. Thank you",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
+          Future.delayed(const Duration(milliseconds: 1000), () {
+            Navigator.pop(context);
+          });
+        });
+      };
+    }
+    ),
+    ),
+    ],
+    )
 
 
-                  },
-                ),
-              ),
-            ],
-          )
-
-
-        )
+    )
     );
+    }
   }
-}

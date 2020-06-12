@@ -2,6 +2,12 @@
   "configVersion": 2,
   "packages": [
     {
+      "name": "android_intent",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/android_intent-0.3.7+2",
+      "packageUri": "lib/",
+      "languageVersion": "2.3"
+    },
+    {
       "name": "archive",
       "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/archive-2.0.11",
       "packageUri": "lib/",
@@ -33,7 +39,7 @@
     },
     {
       "name": "cached_network_image",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/cached_network_image-2.1.0+1",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/cached_network_image-2.2.0+1",
       "packageUri": "lib/",
       "languageVersion": "2.1"
     },
@@ -51,13 +57,13 @@
     },
     {
       "name": "cloud_firestore",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/cloud_firestore-0.13.5",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/cloud_firestore-0.13.6",
       "packageUri": "lib/",
       "languageVersion": "2.0"
     },
     {
       "name": "cloud_firestore_platform_interface",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/cloud_firestore_platform_interface-1.1.0",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/cloud_firestore_platform_interface-1.1.2",
       "packageUri": "lib/",
       "languageVersion": "2.0"
     },
@@ -99,13 +105,19 @@
     },
     {
       "name": "device_info",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/device_info-0.4.2+2",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/device_info-0.4.2+4",
       "packageUri": "lib/",
-      "languageVersion": "2.0"
+      "languageVersion": "2.1"
     },
     {
       "name": "emoji_feedback",
       "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/emoji_feedback-0.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.0"
+    },
+    {
+      "name": "equatable",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/equatable-1.2.0",
       "packageUri": "lib/",
       "languageVersion": "2.0"
     },
@@ -123,31 +135,31 @@
     },
     {
       "name": "firebase_analytics",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/firebase_analytics-5.0.11",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/firebase_analytics-5.0.14",
       "packageUri": "lib/",
       "languageVersion": "2.0"
     },
     {
       "name": "firebase_auth",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/firebase_auth-0.16.0",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/firebase_auth-0.16.1",
       "packageUri": "lib/",
       "languageVersion": "2.0"
     },
     {
       "name": "firebase_auth_platform_interface",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/firebase_auth_platform_interface-1.1.7",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/firebase_auth_platform_interface-1.1.8",
       "packageUri": "lib/",
       "languageVersion": "2.0"
     },
     {
       "name": "firebase_auth_web",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/firebase_auth_web-0.1.2",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/firebase_auth_web-0.1.3+1",
       "packageUri": "lib/",
       "languageVersion": "2.0"
     },
     {
       "name": "firebase_core",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/firebase_core-0.4.4+3",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/firebase_core-0.4.5",
       "packageUri": "lib/",
       "languageVersion": "2.0"
     },
@@ -160,6 +172,12 @@
     {
       "name": "firebase_core_web",
       "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/firebase_core_web-0.1.1+2",
+      "packageUri": "lib/",
+      "languageVersion": "2.0"
+    },
+    {
+      "name": "firebase_messaging",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/firebase_messaging-6.0.16",
       "packageUri": "lib/",
       "languageVersion": "2.0"
     },
@@ -183,13 +201,19 @@
     },
     {
       "name": "flutter_cache_manager",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/flutter_cache_manager-1.2.2",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/flutter_cache_manager-1.4.0",
       "packageUri": "lib/",
       "languageVersion": "2.6"
     },
     {
+      "name": "flutter_crashlytics",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/flutter_crashlytics-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.0"
+    },
+    {
       "name": "flutter_device_locale",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/flutter_device_locale-0.3.4+1",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/flutter_device_locale-0.4.0",
       "packageUri": "lib/",
       "languageVersion": "2.1"
     },
@@ -201,7 +225,7 @@
     },
     {
       "name": "flutter_google_places",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/flutter_google_places-0.2.4",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/flutter_google_places-0.2.5",
       "packageUri": "lib/",
       "languageVersion": "2.0"
     },
@@ -212,6 +236,18 @@
       "languageVersion": "2.2"
     },
     {
+      "name": "flutter_local_notifications",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/flutter_local_notifications-1.4.4+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.0"
+    },
+    {
+      "name": "flutter_local_notifications_platform_interface",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/flutter_local_notifications_platform_interface-1.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.1"
+    },
+    {
       "name": "flutter_page_indicator",
       "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/flutter_page_indicator-0.0.3",
       "packageUri": "lib/",
@@ -219,7 +255,7 @@
     },
     {
       "name": "flutter_plugin_android_lifecycle",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/flutter_plugin_android_lifecycle-1.0.7",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/flutter_plugin_android_lifecycle-1.0.8",
       "packageUri": "lib/",
       "languageVersion": "2.1"
     },
@@ -260,20 +296,38 @@
       "languageVersion": "2.0"
     },
     {
-      "name": "google_maps_flutter",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/google_maps_flutter-0.5.26+4",
+      "name": "geolocator",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/geolocator-5.3.1",
       "packageUri": "lib/",
-      "languageVersion": "2.0"
+      "languageVersion": "2.1"
+    },
+    {
+      "name": "google_api_availability",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/google_api_availability-2.0.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.3"
+    },
+    {
+      "name": "google_maps_flutter",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/google_maps_flutter-0.5.27+2",
+      "packageUri": "lib/",
+      "languageVersion": "2.1"
+    },
+    {
+      "name": "google_maps_flutter_platform_interface",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/google_maps_flutter_platform_interface-1.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.1"
     },
     {
       "name": "google_maps_webservice",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/google_maps_webservice-0.0.16",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/google_maps_webservice-0.0.17",
       "packageUri": "lib/",
       "languageVersion": "1.20"
     },
     {
       "name": "http",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/http-0.12.0+4",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/http-0.12.1",
       "packageUri": "lib/",
       "languageVersion": "2.4"
     },
@@ -314,6 +368,12 @@
       "languageVersion": "2.0"
     },
     {
+      "name": "location_permissions",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/location_permissions-2.0.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.1"
+    },
+    {
       "name": "location_platform_interface",
       "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/location_platform_interface-1.0.0",
       "packageUri": "lib/",
@@ -345,9 +405,9 @@
     },
     {
       "name": "package_info",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/package_info-0.4.0+17",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/package_info-0.4.1",
       "packageUri": "lib/",
-      "languageVersion": "2.0"
+      "languageVersion": "2.1"
     },
     {
       "name": "path",
@@ -357,27 +417,45 @@
     },
     {
       "name": "path_provider",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/path_provider-1.6.7",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/path_provider-1.6.10",
       "packageUri": "lib/",
-      "languageVersion": "2.0"
+      "languageVersion": "2.1"
+    },
+    {
+      "name": "path_provider_linux",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/path_provider_linux-0.0.1+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.1"
     },
     {
       "name": "path_provider_macos",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4+1",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4+3",
       "packageUri": "lib/",
       "languageVersion": "2.1"
     },
     {
       "name": "path_provider_platform_interface",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/path_provider_platform_interface-1.0.1",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/path_provider_platform_interface-1.0.2",
       "packageUri": "lib/",
-      "languageVersion": "2.0"
+      "languageVersion": "2.1"
     },
     {
       "name": "pedantic",
       "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/pedantic-1.8.0+1",
       "packageUri": "lib/",
       "languageVersion": "2.1"
+    },
+    {
+      "name": "permission_handler",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/permission_handler-5.0.0+hotfix.6",
+      "packageUri": "lib/",
+      "languageVersion": "2.7"
+    },
+    {
+      "name": "permission_handler_platform_interface",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/permission_handler_platform_interface-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.6"
     },
     {
       "name": "petitparser",
@@ -392,10 +470,28 @@
       "languageVersion": "1.24"
     },
     {
+      "name": "platform_detect",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/platform_detect-1.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.4"
+    },
+    {
       "name": "plugin_platform_interface",
       "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/plugin_platform_interface-1.0.2",
       "packageUri": "lib/",
       "languageVersion": "2.1"
+    },
+    {
+      "name": "process",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/process-3.0.13",
+      "packageUri": "lib/",
+      "languageVersion": "2.0"
+    },
+    {
+      "name": "pub_semver",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/pub_semver-1.4.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.0"
     },
     {
       "name": "quiver",
@@ -405,7 +501,7 @@
     },
     {
       "name": "rxdart",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/rxdart-0.23.1",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/rxdart-0.24.1",
       "packageUri": "lib/",
       "languageVersion": "2.6"
     },
@@ -417,27 +513,27 @@
     },
     {
       "name": "shared_preferences",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/shared_preferences-0.5.7",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/shared_preferences-0.5.7+3",
       "packageUri": "lib/",
-      "languageVersion": "2.0"
+      "languageVersion": "2.1"
     },
     {
       "name": "shared_preferences_macos",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/shared_preferences_macos-0.0.1+7",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/shared_preferences_macos-0.0.1+10",
       "packageUri": "lib/",
       "languageVersion": "2.1"
     },
     {
       "name": "shared_preferences_platform_interface",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/shared_preferences_platform_interface-1.0.3",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/shared_preferences_platform_interface-1.0.4",
       "packageUri": "lib/",
-      "languageVersion": "2.0"
+      "languageVersion": "2.1"
     },
     {
       "name": "shared_preferences_web",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/shared_preferences_web-0.1.2+4",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/shared_preferences_web-0.1.2+7",
       "packageUri": "lib/",
-      "languageVersion": "2.0"
+      "languageVersion": "2.1"
     },
     {
       "name": "simple_animations",
@@ -452,6 +548,12 @@
       "languageVersion": "1.11"
     },
     {
+      "name": "smartlook",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/smartlook-0.0.9",
+      "packageUri": "lib/",
+      "languageVersion": "2.1"
+    },
+    {
       "name": "source_span",
       "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/source_span-1.5.5",
       "packageUri": "lib/",
@@ -459,13 +561,13 @@
     },
     {
       "name": "sqflite",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/sqflite-1.3.0",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/sqflite-1.3.0+2",
       "packageUri": "lib/",
       "languageVersion": "2.7"
     },
     {
       "name": "sqflite_common",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/sqflite_common-1.0.0+1",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/sqflite_common-1.0.1",
       "packageUri": "lib/",
       "languageVersion": "2.7"
     },
@@ -480,6 +582,12 @@
       "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/stream_channel-2.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.0"
+    },
+    {
+      "name": "stream_transform",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/stream_transform-1.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.6"
     },
     {
       "name": "string_scanner",
@@ -519,33 +627,33 @@
     },
     {
       "name": "upgrader",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/upgrader-0.10.0",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/upgrader-0.11.1",
       "packageUri": "lib/",
       "languageVersion": "2.2"
     },
     {
       "name": "url_launcher",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/url_launcher-5.4.5",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/url_launcher-5.4.10",
       "packageUri": "lib/",
-      "languageVersion": "2.0"
+      "languageVersion": "2.1"
     },
     {
       "name": "url_launcher_macos",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/url_launcher_macos-0.0.1+5",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/url_launcher_macos-0.0.1+7",
       "packageUri": "lib/",
       "languageVersion": "2.1"
     },
     {
       "name": "url_launcher_platform_interface",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/url_launcher_platform_interface-1.0.6",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/url_launcher_platform_interface-1.0.7",
       "packageUri": "lib/",
-      "languageVersion": "2.0"
+      "languageVersion": "2.1"
     },
     {
       "name": "url_launcher_web",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/url_launcher_web-0.1.1+1",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/url_launcher_web-0.1.1+6",
       "packageUri": "lib/",
-      "languageVersion": "2.0"
+      "languageVersion": "2.2"
     },
     {
       "name": "uuid",
@@ -567,9 +675,15 @@
     },
     {
       "name": "webview_flutter",
-      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/webview_flutter-0.3.20+2",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/webview_flutter-0.3.22+1",
       "packageUri": "lib/",
       "languageVersion": "2.7"
+    },
+    {
+      "name": "xdg_directories",
+      "rootUri": "file:///C:/Users/92333/AppData/Roaming/Pub/Cache/hosted/pub.dartlang.org/xdg_directories-0.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.3"
     },
     {
       "name": "xml",
@@ -584,7 +698,7 @@
       "languageVersion": "2.0"
     }
   ],
-  "generated": "2020-05-08T23:40:18.161355Z",
+  "generated": "2020-06-12T09:03:34.553458Z",
   "generator": "pub",
   "generatorVersion": "2.8.0-dev.5.0.flutter-fc3af737c7"
 }

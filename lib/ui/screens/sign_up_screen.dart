@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:onboarding_flow/models/user.dart';
 import 'package:onboarding_flow/ui/widgets/custom_flat_button.dart';
 import 'package:onboarding_flow/ui/widgets/custom_alert_dialog.dart';
-
+import 'package:onboarding_flow/ui/screens/NewHome.dart';
 class SignUpScreen extends StatefulWidget {
   _SignUpScreenState createState() => _SignUpScreenState();
 }
@@ -30,7 +30,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.initState();
 
     onBackPress = () {
-      Navigator.of(context).pop();
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) =>
+              NewHome(true))
+      );
     };
 
     _nameField = new CustomTextField(
@@ -173,7 +177,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Future<void> _sendAnalyticsEvent(String name) async {
 
     await analytics.logEvent(
-      name: 'Signup_Success',
+      name: 'login_signup',
       parameters: <String, dynamic>{
         'UserEmail':name,
 

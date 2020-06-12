@@ -1,17 +1,19 @@
+import 'dart:ui';
+import 'package:android_intent/android_intent.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nice_button/NiceButton.dart';
+import 'package:onboarding_flow/ui/pages/CityDetails.dart';
 import 'package:onboarding_flow/ui/pages/HomePageWithoutAppBar.dart';
 import 'package:onboarding_flow/ui/pages/homepage.dart';
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:search_widget/search_widget.dart';
-
 import '../../data.dart';
 
 class Topics extends StatefulWidget {
@@ -34,42 +36,78 @@ class TopicsState extends State {
   var tmpArray2 = [];
   var showSubtopics = false;
   var counter;
-  bool showworld = false;
+  bool showeinter = true;
+  bool showdistance = false;
+  bool showcountery = false;
+  bool showcity = false;
+  List<Widget> header;
+  bool searchtrue = false;
+  bool distancetrue = false;
+  bool subtopicstrue = false;
+  bool showworld = true;
   List<Data> subtopicsList = new List();
   bool firsttime = true;
   double _lowerValue = 50;
+  List<Widget> countryList = [];
   double _upperValue = 180;
   bool showtext = true;
   var obj = new Map<dynamic, dynamic>();
   var Mainmap = new Map<dynamic, dynamic>();
-  var firstColor = Color(0xff141e30), secondColor = Color(0xff243b55);
+  var firstColor = Color(0xff141e30),
+      secondColor = Color(0xff243b55);
   FirebaseAnalytics analytics = FirebaseAnalytics();
-  String CurrentTopic="assets/topic_one.png";
+  String CurrentTopic = "assets/topic_one.png";
+  String CurrentTitle = "";
+  List searchname = [];
+  List<String> clist = [];
+  List<String> interList = [];
+  List<String> citylist = [];
+  String _selectedItem;
+  List<Widget> Pages = [];
+  bool _show = true;
+  List<Widget> distanceList = [];
+  int counterDisaple = 0;
+  var currentIndex = 0;
+  bool firsttimeinterest = true;
+  bool searchcountryfirst = true;
+  bool firsttimecities = true;
+  String citysearch = "";
 
   List getCheckboxItems() {
     var tmpArray = [];
     var tmpArray2 = [];
-
     for (int i = 0; i < subtopicsList.length; i++) {
       subtopicsList[i].contents.forEach((key, value) {
         if (subtopicsList[i].contents[key]['alue'] == true) {
           print("Runing " + i.toString());
-
           tmpArray.add(value['id']);
         }
       });
     }
-
     print("Actual List" + tmpArray.toString());
-
     return tmpArray.toSet().toList();
     ;
   }
 
-  List getCheckboxnames() {
+  List GetCheckItems() {
     var tmpArray = [];
     var tmpArray2 = [];
+    for (int i = 0; i < subtopicsList.length; i++) {
+      subtopicsList[i].contents.forEach((key, value) {
+        if (subtopicsList[i].contents[key]['alue'] == true) {
+          print("Runing " + i.toString());
+          tmpArray.add(value['id']);
+        }
+      });
+    }
+    print("Actual List" + tmpArray.toString());
+    return tmpArray.toSet().toList();
+    ;
+  }
 
+  List getCheckednames() {
+    var tmpArray = [];
+    var tmpArray2 = [];
     for (int i = 0; i < subtopicsList.length; i++) {
       subtopicsList[i].contents.forEach((key, value) {
         if (subtopicsList[i].contents[key]['alue'] == true) {
@@ -77,7 +115,20 @@ class TopicsState extends State {
         }
       });
     }
+    print("Actual List 2" + tmpArray2.toString());
+    return tmpArray2.toSet().toList();
+  }
 
+  List getCheckboxnames() {
+    var tmpArray = [];
+    var tmpArray2 = [];
+    for (int i = 0; i < subtopicsList.length; i++) {
+      subtopicsList[i].contents.forEach((key, value) {
+        if (subtopicsList[i].contents[key]['alue'] == true) {
+          tmpArray2.add(key);
+        }
+      });
+    }
     print("Actual List 2" + tmpArray2.toString());
     return tmpArray2.toSet().toList();
   }
@@ -91,173 +142,1134 @@ class TopicsState extends State {
         }
       });
     }
-
     print("Actual List 2" + tmpArray2.toString());
     return tmpArray2;
   }
 
-Future<void> _sendAnalyticsEvent(String name) async {
-  await analytics.logEvent(
-    name: 'Subtopics',
-    parameters: <String, dynamic>{
-      'subtopic': name,
-    },
-  );
-}
+  Future<void> _sendAnalyticsEvent(String name) async {
+    await analytics.logEvent(
+      name: 'Subtopics',
+      parameters: <String, dynamic>{
+        'subtopic': name,
+      },
+    );
+  }
 
-Future<void> _sendAnalyticsEventshowcities(String name) async {
-  await analytics.logEvent(
-    name: 'ShowCities',
-    parameters: <String, dynamic>{
-      'clickonshoecities': "yes",
-    },
-  );
-}
+  Future<void> _sendAnalyticsEventshowcities(String name) async {
+    await analytics.logEvent(
+      name: 'ShowCities',
+      parameters: <String, dynamic>{
+        'clickonshoecities': "yes",
+      },
+    );
+  }
+
+  Widget PageBUtton(int index, String name, String icon) {
+    bool selected = false;
+    var firstColor = Color(0xff5b86e5),
+        secondColor = Color(0xff36d1dc);
+    return Padding(
+      padding: const EdgeInsets.all(6.0),
+      child: GestureDetector(
+        onTap: () {
+          print("index " + index.toString());
+          setState(() {
+            if (index == 0) {
+              currentIndex = 0;
+              showeinter = true;
+              showdistance = false;
+              showcountery = false;
+              showcity = false;
+            }
+            if (index == 1) {
+              currentIndex = 3;
+              showeinter = false;
+              showdistance = false;
+              showcountery = true;
+              showcity = false;
+              showworld = true;
+            }
+            if (index == 2) {
+              currentIndex = 2;
+              showeinter = false;
+              showdistance = true;
+              showcountery = false;
+              showcity = false;
+              showworld = true;
+            }
+            if (index == 3) {
+              currentIndex = 1;
+              showeinter = false;
+              showdistance = false;
+              showcountery = false;
+              showcity = true;
+              showworld = true;
+            }
+            print("index 5 " + index.toString());
+            print("index 5 " + currentIndex.toString());
+            if (currentIndex == index) {
+              selected = true;
+            } else {
+              selected = false;
+            }
+            print("index " + index.toString());
+            print("Selected " + selected.toString());
+            print("showeinter " + showeinter.toString());
+            print("showdistance " + showdistance.toString());
+            print("showcountery " + showcountery.toString());
+            print("showcity " + showcity.toString());
+            print("showworld " + showworld.toString());
+          });
+        },
+        child: Container(
+          height: 80,
+          width: 80,
+          child: Card(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.white70, width: 5),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              semanticContainer: true,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              elevation: 20,
+              child: Column(
+                children: <Widget>[
+                  Center(
+                    child: new IconButton(
+                      icon: new Image.asset(icon),
+                      tooltip: 'Closes application',
+                    ),
+                  ),
+                  Center(child: Text(name))
+                ],
+              )
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-//
+    Pages.length >= 0 ? Pages.clear() : null;
+    Pages.add(PageBUtton(0, "Interests", 'assets/search-interests.png'));
+    Pages.add(PageBUtton(2, "Distance", 'assets/search-distance.png'));
+    Pages.add(PageBUtton(3, "Nation", 'assets/search-nation.png'));
+    Pages.add(PageBUtton(1, "City", 'assets/search-city.png'));
+    header = [];
+    List listids = getCheckboxItems();
+    List listnames = getCheckboxnames();
+    print("List IDs" + searchtrue.toString());
+    header = getselectedheader();
+    if (header.length < 1) {
+      subtopicstrue = false;
+    }
+    print("ShowInter " + showeinter.toString());
     return SingleChildScrollView(
       child: Wrap(
         children: <Widget>[
           Container(
             color: Color(0xffEEEEEE),
-            child: Stack(
+            child: Column(
               children: <Widget>[
                 showtext
                     ? Column(
-                        children: <Widget>[
-                          Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Image(
-                                image: AssetImage("assets/headericon.png"),
-                                width: 50,
-                                height: 50,
-                              )),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 50, right: 50, top: 8.0),
-                            child: Text(
-                              "Discover the perfect destinations according to your interests!",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.bold),
-                            ),
-                          )
-                        ],
-                      )
-                    : Container(),
-
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image(
+                          image: AssetImage("assets/headericon.png"),
+                          width: 50,
+                          height: 50,
+                        )),
+                    Padding(
                       padding: const EdgeInsets.only(
-                          left: 34, right: 10, top: 118.0),
+                          left: 50, right: 50, top: 8.0),
                       child: Text(
-                        "Interessi:".toUpperCase(),
+                        "Discover the perfect destinations according to your interests!",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.bold),
+                            fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  ],
+                )
+                    : Container(),
+                Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.start,
+                    children: Pages),
+                showeinter ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Column(
+                          children: <Widget>[
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            FutureBuilder(
+                              future: searchinterest(),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) return Center(
+                                  child: SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      backgroundColor: Colors.amber,
+                                    ),
+                                  ),
+                                );
+
+
+                                return SearchWidget<String>(
+                                  dataList: interList.getRange(0, 111).toSet().toList(),
+                                  hideSearchBoxWhenItemSelected: false,
+                                  listContainerHeight: MediaQuery
+                                      .of(context)
+                                      .size
+                                      .height / 4,
+                                  queryBuilder: (query, list) {
+                                    return list
+                                        .where((item) =>
+                                        item
+                                            .toLowerCase()
+                                            .startsWith(query.toLowerCase()))
+                                        .toList();
+                                  },
+                                  popupListItemBuilder: (item) {
+                                    String result;
+                                    if(item.contains("?")){
+                                       result = item.substring(0, item.indexOf('?'));
+                                    }else{
+                                      result=item;
+                                    }
+
+                                    return PopupListItemWidget(result);
+                                  },
+                                  selectedItemBuilder: (selectedItem,
+                                      deleteSelectedItem) {
+//                  return SelectedItemWidget(selectedItem, deleteSelectedItem);
+                                  },
+                                  // widget customization
+                                  noItemsFoundWidget: NoItemsFound(),
+                                  textFieldBuilder: (controller, focusNode) {
+                                    return MyTextField(controller, focusNode,
+                                        "Type a interest...");
+                                  },
+                                  onItemSelected: (item) {
+
+
+                                    var index = item.substring(item.length - 1,item.length);
+                                    int indexint=int.parse(index);
+                                    print("index final "+indexint.toString());
+
+                                    Fluttertoast.showToast(
+                                        msg: "Destinations Updated",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: Colors.green,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0
+                                    );
+                                    _sendanalyticsSubtopics(item);
+                                    setState(() {
+                                      print("indexint"+ indexint.toString());
+                                      showSubtopics=true;
+
+                                      if(indexint==0){
+                                        CurrentTitle = "Culture";
+                                        CurrentTopic = "assets/topic_one.png";
+                                      }
+                                      if(indexint==1){
+                                        CurrentTitle = "Fun / kids";
+                                        CurrentTopic = "assets/topic_two.png";
+                                      }
+                                      if(indexint==2){
+                                        CurrentTitle = "Nature";
+                                        CurrentTopic = "assets/topic_three.png";
+                                      }
+                                      if(indexint==3){
+                                        CurrentTitle = "Nightlife";
+                                        CurrentTopic = "assets/topic_four.png";
+                                      }
+                                      if(indexint==4){
+                                        CurrentTitle = "Sport";
+                                        CurrentTopic = "assets/topic_fie.png";
+                                      }
+                                      if(indexint==5){
+                                        CurrentTitle = "Wellness";
+                                        CurrentTopic = "assets/topic_six.png";
+                                      }
+
+                                      firsttime = true;
+                                      Future.delayed(const Duration(milliseconds: 2000), () {
+                                        String result;
+                                        if(item.contains("?")) {
+                                          result    = item.substring(
+                                              0, item.indexOf('?'));
+                                        }else{
+                                          result=item;
+                                        }
+                                        setState(() {
+                                          subtopicstrue = true;
+                                          subtopicsList[indexint].contents[result]['alue'] =
+                                      true;
+                                        });
+                                      });
+
+                                    });
+                                    _sendanalyticsSubtopics(item);
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                    Wrap(
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 22, top: 0),
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(color: Colors.white70, width: 5),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            semanticContainer: true,
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            elevation: 20,
-                            child: Container(
-                              height: 35,
-                              width: 110,
-                              decoration: new BoxDecoration(
-                                  color: Colors.grey,
-                                  shape: BoxShape.rectangle,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(4.0))),
-                              child: Center(
-                                child: Text(
-                                  "Tutto",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Image(
-                              image: AssetImage("assets/plus.png"),
-                              width: 30,
-                              height: 30,
-                            )),
+                        Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.start,
+                            children: distanceList),
+                        Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.start,
+                            children: countryList)
                       ],
                     ),
-//
-                    showSubtopics?UnSelect():    Select(),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12.0),
-                      child: Center(
-                        child: NiceButton(
-                          elevation: 10,
-                          radius: 20,
-                          padding: const EdgeInsets.all(15),
-                          text: showworld ? "Off World ?" : "Show World ? ",
-                          gradientColors: [secondColor, firstColor],
-                          onPressed: () {
-                            setState(() {
-                              if (showworld) {
-                                showworld = false;
-                              } else {
-                                showworld = true;
-                              }
-                            });
-                          },
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 34, right: 10, top: 18.0),
+                              child: Text(
+                                "SELECT YOUR INTERESTS:".toUpperCase(),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.start,
+                                children: header),
+                            showSubtopics ? UnSelect() : Select(),
+                          ],
                         ),
-                      ),
-                    ),
-                    showworld ? WorlSearch() : Container()
+//                    Padding(
+//                      padding: const EdgeInsets.only(top: 12.0),
+//                      child: Center(
+//                        child: NiceButton(
+//                          elevation: 10,
+//                          radius: 15,
+//                          width: 150,
+//                          fontSize: 15,
+//                          padding: const EdgeInsets.all(15),
+//                          text: showworld ? "All the World" : "All the World",
+//                          gradientColors: [secondColor, firstColor],
+//                          onPressed: () {
+//                            setState(() {
+//                              if (showworld) {
+//                                showworld = false;
+//                              } else {
+//                                showworld = true;
+//                              }
+//                            });
+//                          },
+//                        ),
+//                      ),
+//                    ),
+                      ],
+                    )
                   ],
-                ),
-
-//
+                ) : Container(),
+                showworld ? WorlSearch() : Container()
               ],
             ),
           ),
-          HomePageWithoutAppbar(list, list2),
+          HomePageWithoutAppbar(
+              listids,
+              listnames,
+              searchname,
+              searchtrue,
+              distancetrue,
+              subtopicstrue,
+              _lowerValue),
         ],
       ),
     );
   }
 
   Padding WorlSearch() {
+    print("WorlSearch showeinter " + showeinter.toString());
+    print("WorlSearch showdistance " + showdistance.toString());
+    print("WorlSearch showcountery " + showcountery.toString());
+    print("WorlSearch showcity " + showcity.toString());
+    print(" WorlSearch showworld " + showworld.toString());
     return Padding(
       padding: const EdgeInsets.all(18.0),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          side: BorderSide(color: Colors.white70, width: 5),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        semanticContainer: true,
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+//            Search By Country
+          showcity ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Column(
+                  children: <Widget>[
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    FutureBuilder(
+                      future: searchcountry(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) return Center(
+                          child: SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              backgroundColor: Colors.amber,
+                            ),
+                          ),
+                        );
+                        return SearchWidget<String>(
+                          dataList: citylist.toSet().toList(),
+                          hideSearchBoxWhenItemSelected: false,
+                          listContainerHeight: MediaQuery
+                              .of(context)
+                              .size
+                              .height / 4,
+                          queryBuilder: (query, list) {
+                            return list
+                                .where((item) =>
+                                item
+                                    .toLowerCase()
+                                    .startsWith(query.toLowerCase()))
+                                .toList();
+                          },
+                          popupListItemBuilder: (item) {
+                            return PopupListItemWidget(item);
+                          },
+                          selectedItemBuilder: (selectedItem,
+                              deleteSelectedItem) {
+//                  return SelectedItemWidget(selectedItem, deleteSelectedItem);
+                          },
+                          // widget customization
+                          noItemsFoundWidget: NoItemsFound(),
+                          textFieldBuilder: (controller, focusNode) {
+                            return MyTextField(
+                                controller, focusNode, "Type a country...");
+                          },
+                          onItemSelected: (item) {
+                            setState(() {
+                              if (searchname.length >= 6) {
+                                Scaffold.of(context).showSnackBar(new SnackBar(
+                                  content: new Text(
+                                      "you reached the max number of filters. remove some filters to add new ones"),
+                                ));
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: "Destinations Updated",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.green,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0
+                                );
+                                _sendAnalyticsFilter();
+                                print("Umer selected");
+                                _selectedItem = item;
+                                searchtrue = true;
+                                showtext = false;
+                                searchname.add(
+                                    _selectedItem.replaceAll(" ", "+"));
+                                countryList.add(selectedtopic(
+                                    countryList.length, _selectedItem));
+                              }
+                            });
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Wrap(
+                children: <Widget>[
+                  Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      children: distanceList),
+                  Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      children: countryList)
+                ],
+              ),
+              header.length > 0 ? Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 34, right: 10, top: 18.0),
+                    child: Text(
+                      "YOUR INTERESTS:".toUpperCase(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      children: header),
+                ],
+              ) : Container()
+            ],
+          ) : Container(),
+          showcountery ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Column(
+                  children: <Widget>[
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    FutureBuilder(
+                      future: Fetchcities(),
+                      builder: (context, snapshot) {
+                        print("Size : " + citysearch.length.toString());
+                        return SearchWidget<String>(
+                          dataList: clist.toSet().toList(),
+                          hideSearchBoxWhenItemSelected: false,
+                          listContainerHeight: citysearch.length > 2
+                              ? MediaQuery
+                              .of(context)
+                              .size
+                              .height / 4
+                              : 0,
+                          queryBuilder: (query, list) {
+                            return list
+                                .where((item) =>
+                                item
+                                    .toLowerCase()
+                                    .startsWith(query.toLowerCase()))
+                                .toList();
+                          },
+                          popupListItemBuilder: (item) {
+                            return PopupListItemWidget(item);
+                          },
+                          selectedItemBuilder: (selectedItem,
+                              deleteSelectedItem) {
+//                  return SelectedItemWidget(selectedItem, deleteSelectedItem);
+                          },
+                          // widget customization
+                          noItemsFoundWidget: Container(),
+                          textFieldBuilder: (controller, focusNode) {
+                            controller.addListener(() {
+                              if (controller.text.length > 2) {
+                                setState(() {
+                                  firsttimecities = true;
+                                  citysearch = controller.text;
+                                  print("controller " + controller.text);
+                                  return MyTextField(
+                                      controller, focusNode, "Type a city and click on search...");
+                                });
+                              } else {
+                                setState(() {
+                                  citysearch = "a";
+                                  return MyTextField(
+                                      controller, focusNode, "Type a city  click on search...");
+                                });
+                              }
+                            });
+                            return MyTextField(
+                                controller, focusNode, "Type a city and click on search...");
+                          },
+                          onItemSelected: (item) {
+                            String result = item.substring(0, item.indexOf(','));
+                           List l1=[];
+                           List l2=[];
+                            Map<String, dynamic> places;
+                            Fetchcitiesdetail(result.replaceAll(" ", "%20")).then((value) {
+                              print("Sorry no result "+ value.toString());
+                                for(int i =0;i<value.length;i++){
+
+                                  if(value[i]['info']['name']==result){
+                                    places=value[i];
+                                  }
+                                }
+                             if(places!=null) {
+                               Navigator.push(
+                                   context,
+                                   MaterialPageRoute(builder: (context) =>
+                                       DetailPage(l1, l2,
+                                           places, true))
+
+                               );
+                             }else{
+                               print("Sorry");
+                               Fluttertoast.showToast(
+                                   msg: "Sorry city is not exist!",
+                                   toastLength: Toast.LENGTH_SHORT,
+                                   gravity: ToastGravity.BOTTOM,
+                                   timeInSecForIosWeb: 1,
+                                   backgroundColor: Colors.green,
+                                   textColor: Colors.white,
+                                   fontSize: 16.0
+                               );
+                             }
+                            });
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Wrap(
+                children: <Widget>[
+                  Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      children: distanceList),
+                  Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      children: countryList)
+                ],
+              ),
+              header.length > 0 ? Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 34, right: 10, top: 18.0),
+                    child: Text(
+                      "YOUR INTERESTS:".toUpperCase(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      children: header),
+                ],
+              ) : Container(),
+            ],
+          ) : Container(),
+
+          showdistance ? Wrap(
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Center(child: Text(
+                      "0 Km                                            2000 Km",
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold
+                      ),),),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 0, left: 50, right: 50),
+                    alignment: Alignment.centerLeft,
+                    child: FlutterSlider(
+                      values: [200],
+                      max: 2000,
+                      min: 0,
+                      rtl: false,
+                      visibleTouchArea: false,
+                      onDragging: (handlerIndex, lowerValue, upperValue) async {
+                        if (await Permission.location.isGranted) {
+                          _lowerValue = lowerValue;
+                          _upperValue = upperValue;
+                          print("Distance lower" + _lowerValue.toString());
+                          print("Distance Higher" + _upperValue.toString());
+                          distanceList.clear();
+                          distanceList.add(selectedTopicsForHeader(
+                              false, 1, _lowerValue.toString() + " Km"));
+//                  Fluttertoast.showToast(
+//                      msg: "Destinations Updated",
+//                      toastLength: Toast.LENGTH_SHORT,
+//                      gravity: ToastGravity.BOTTOM,
+//                      timeInSecForIosWeb: 1,
+//                      backgroundColor: Colors.green,
+//                      textColor: Colors.white,
+//                      fontSize: 16.0
+//                  );
+                          _sendAnalyticsDistance();
+                          setState(() {
+                            showtext = false;
+                            distancetrue = true;
+                          });
+                        } else {
+                          if (distanceList.length > 0) {
+                            distanceList.clear();
+                          }
+                          bool isAndroid = Theme
+                              .of(context)
+                              .platform == TargetPlatform.android;
+                          if (counterDisaple == 2) {
+                            if (isAndroid) {
+                              final AndroidIntent intent = AndroidIntent(
+                                action: 'action_application_details_settings',
+                                data: 'package:trip.travelplanner.vacationholiday', // replace com.example.app with your applicationId
+                              );
+                              await intent.launch();
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) =>
+                                      AlertDialog(
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            child: Text("OK", style: (TextStyle(
+                                                color: Colors.blue
+                                            )),),
+                                            onPressed: () async {
+                                              Navigator.pop(context);
+                                              Map<Permission,
+                                                  PermissionStatus> statuses = await [
+                                                Permission.location,
+                                              ].request();
+                                            },
+                                          )
+                                        ],
+                                        title: Text("Need Permission"),
+                                        content: Text(
+                                            "Travel planner needs to Know your location in order to show you near cities. Do you want to give permission?"),
+                                      ));
+                            }
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (context) =>
+                                    AlertDialog(
+                                      actions: <Widget>[
+                                        FlatButton(
+                                          child: Text("OK", style: (TextStyle(
+                                              color: Colors.blue
+                                          )),),
+                                          onPressed: () async {
+                                            counterDisaple++;
+                                            Navigator.pop(context);
+                                            Map<Permission,
+                                                PermissionStatus> statuses = await [
+                                              Permission.location,
+                                            ].request();
+                                          },
+                                        )
+                                      ],
+                                      title: Text("Need Permission"),
+                                      content: Text(
+                                          "Travel planner needs to Know your location in order to show you near cities. Do you want to give permission?"),
+                                    ));
+                          }
+                        }
+//                    showDialog(
+//                        context: context,
+//                        builder: (context) => AlertDialog(
+//                          actions: <Widget>[
+//                        FlatButton(
+//                        child: Text("OK",style: (TextStyle(
+//                          color: Colors.blue
+//                        )),),
+//                      onPressed: () async {
+//                        Navigator.pop(context);
+//                        Map<Permission, PermissionStatus> statuses = await [
+//                    Permission.location,
+//                  ].request();
+//                      },
+//                    )
+//                          ],
+//                          title: Text("Need Permission"),
+//                          content: Text("Travel planner needs to Know your location in order to show you near cities. Do you want to give permission?"),
+//                        ));
+//                  }
+                      },
+                    ),
+                  ),
+                  Wrap(
+
+                    children: <Widget>[
+                      Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.start,
+                          children: distanceList),
+                      Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.start,
+                          children: countryList)
+                    ],
+                  ),
+                  header.length > 0 ? Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 34, right: 10, top: 18.0),
+                        child: Text(
+                          "YOUR INTERESTS:".toUpperCase(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.start,
+                          children: header),
+                    ],
+                  ) : Container(),
+                ],
+              )
+            ],
+          ) : Container(),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _sendanalyticsSubtopics(String name) async {
+    await analytics.logEvent(
+      name: 'home_topic_$name',
+      parameters: <String, dynamic>{
+        'UserinCityDetailsPage': "yes",
+      },
+    );
+  }
+  Future<List<dynamic>> Fetchcitiesdetail(String value) async {
+
+    var obj = new Map<dynamic, dynamic>();
+    var Mainmap = new Map<String, dynamic>();
+    String url = "http://gscrape.xeeve.com/api/searchcity?input=" +
+        value;
+//    String url =   "http://gscrape.xeeve.com/api/searchgroup?topicid[]=2&topicid[]=3&lang=en_US";
+    final response = await http.get(url);
+    print("URL : " + url);
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    print("citiesname Response : " + response.body);
+    List listresponse = json.decode(response.body)['result']['cities'];
+    if (clist.length > 0) {
+      clist.clear();
+    }
+    await listresponse.forEach((element) async {
+      var Mainmap = new Map<String, dynamic>();
+      clist.add(element['info']['name']);
+      print("citiesname " + element['info']['name']);
+    });
+    print("cities " + clist.length.toString());
+    firsttimecities = false;
+    return listresponse;
+    return json.decode(response.body);
+
+  }
+  Future<void> _sendAnalyticsDistance() async {
+    await analytics.logEvent(
+      name: 'home_distancefilter',
+      parameters: <String, dynamic>{
+        'UserinCityDetailsPage': "yes",
+      },
+    );
+  }
+
+  Future<void> _sendAnalyticsFilter() async {
+    await analytics.logEvent(
+      name: 'home_countryfilter',
+      parameters: <String, dynamic>{
+        'UserinCityDetailsPage': "yes",
+      },
+    );
+  }
+
+  Widget CheckBoxList() {
+    List bar;
+    return FutureBuilder(
+        future: Fetchsubtopics(),
+        builder: (BuildContext context, AsyncSnapshot<List<Data>> dataList) {
+          if (firsttime) {
+            if (!dataList.hasData)
+              return Padding(
+                padding: const EdgeInsets.only(top: 28.0),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.amber,
+                  ),
+                ),
+              );
+          }
+          return SingleChildScrollView(
+            physics: ScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 18.0, right: 18.0),
+              child: Wrap(children: <Widget>[
+                ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(), // new
+                    itemCount: subtopicsList.length,
+                    itemBuilder: (context, i) {
+                      var counter = 0;
+                      print("ListView" + subtopicsList[i].title);
+                      print("CurrentTitle" + CurrentTitle);
+                      List words = [];
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: subtopicsList[i].title == CurrentTitle
+                            ? subtopicsList[i].contents.keys.map((String key) {
+                          return CheckboxListTile(
+                            title: new Text(
+                              "$key",
+                              style: TextStyle(
+                                shadows: [
+                                  Shadow(
+                                    blurRadius: 110,
+                                    color: Colors.grey,
+                                    offset: Offset(4.0, 4.0),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value: subtopicsList[i].contents[key]['alue'],
+                            activeColor: Colors.pink,
+                            checkColor: Colors.white,
+                            onChanged: (bool value) {
+                              Fluttertoast.showToast(
+                                  msg: "Destinations Updated",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.green,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0
+                              );
+                              _sendanalyticsSubtopics(key);
+                              setState(() {
+                                subtopicstrue = true;
+                                showtext = false;
+                                subtopicsList[i].contents[key]['alue'] =
+                                    value;
+                                firsttime = false;
+//                              showtext = false;
+                              });
+                              _sendanalyticsSubtopics(key);
+                            },
+                          );
+                        }).toList()
+                            : words
+                            .map<Widget>(
+                                (word) => Container(child: Text(word)))
+                            .toList(),
+                      );
+                    })
+              ]),
+            ),
+          );
+        });
+  }
+
+  Future<List<Data>> searchinterest() async {
+    if (firsttimeinterest) {
+      String url = 'https://gscrape.xeeve.com/api/config?lang=en_US';
+//    String url =   "http://gscrape.xeeve.com/api/searchgroup?topicid[]=2&topicid[]=3&lang=en_US";
+      final response = await http.get(url);
+      print("URL : " + url);
+      if (response.statusCode == 200) {
+        print("Response : umer" + response.body);
+        List listresponse = json.decode(response.body)['search']['topics'];
+        var counter=-1;
+
+        if(interList.length>0){
+          interList.clear();
+        }
+        print("Interlist size real "+interList.length.toString());
+        await listresponse.forEach((element) async {
+           counter++;
+          await element['childs'].forEach((doc) {
+            var obj = new Map<dynamic, dynamic>();
+            obj['alue'] = false;
+            obj['id'] = doc['id'].toString();
+//                                          obj[listresponse[i]['childs']['id']] =false;
+            print("TEXT VIEW" + doc.toString());
+            interList.add(doc['name']+"?"+counter.toString());
+            print("InterList " + doc['name'].toString());
+          });
+        });
+        firsttimeinterest = false;
+        return subtopicsList;
+      } else {
+        print("Failed to load album " + url);
+        throw Exception('Failed to load album');
+      }
+    } else {
+      return subtopicsList;
+    }
+  }
+
+  Future<List<Data>> Fetchsubtopics() async {
+    if (firsttime) {
+      var obj = new Map<dynamic, dynamic>();
+      var Mainmap = new Map<String, dynamic>();
+      String url = 'https://gscrape.xeeve.com/api/config?lang=en_US';
+//    String url =   "http://gscrape.xeeve.com/api/searchgroup?topicid[]=2&topicid[]=3&lang=en_US";
+      final response = await http.get(url);
+      print("URL : " + url);
+      if (response.statusCode == 200) {
+        // If the server did return a 200 OK response,
+        // then parse the JSON.
+        print("Response : " + response.body);
+        List listresponse = json.decode(response.body)['search']['topics'];
+        await listresponse.forEach((element) async {
+          var Mainmap = new Map<String, dynamic>();
+          await element['childs'].forEach((doc) {
+            var obj = new Map<dynamic, dynamic>();
+            obj['alue'] = false;
+            obj['id'] = doc['id'].toString();
+//                                          obj[listresponse[i]['childs']['id']] =false;
+            print("TEXT VIEW" + doc.toString());
+            interList.add(doc['name']);
+            print("InterList " + doc['name'].toString());
+            Mainmap[doc['name']] = obj;
+            print("TEXT VIEW umer" + subtopicsList.length.toString());
+          });
+          await subtopicsList.add(
+              new Data(element['name'], Mainmap));
+        });
+        List conteryresponse = json.decode(response.body)['geo']['countries'];
+        await conteryresponse.forEach((element) async {
+          citylist.add(element['name']);
+        });
+        print("Mainmap " + Mainmap.length.toString());
+        return subtopicsList;
+        return json.decode(response.body);
+      } else {
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        print("Failed to load album " + url);
+        throw Exception('Failed to load album');
+      }
+    } else {
+      return subtopicsList;
+    }
+  }
+
+  Future<List<Data>> Fetchcities() async {
+    if (firsttimecities) {
+      var obj = new Map<dynamic, dynamic>();
+      var Mainmap = new Map<String, dynamic>();
+      String url = "http://gscrape.xeeve.com/api/searchcity?input=" +
+          citysearch;
+//    String url =   "http://gscrape.xeeve.com/api/searchgroup?topicid[]=2&topicid[]=3&lang=en_US";
+      final response = await http.get(url);
+      print("URL : " + url);
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      print("citiesname Response : " + response.body);
+      if (clist.length > 0) {
+        clist.clear();
+      }
+      List listresponse = json.decode(response.body)['result']['cities'];
+
+      await listresponse.forEach((element) async {
+        var Mainmap = new Map<String, dynamic>();
+        print("Country umer"+ element['country']['name'].toString());
+        if(element["levels"]!=null) {
+          clist.add(element['info']['name'].toString() + ", " +
+              element['levels']['2']['name'].toString() + ", " +
+              element['country']['name'].toString());
+        }else{
+          clist.add(element['info']['name'].toString() + ", " +
+              element['country']['name'].toString());
+        }
+
+
+
+      });
+      print("city habiba"+clist[0]);
+      firsttimecities = false;
+      return subtopicsList;
+      return json.decode(response.body);
+    } else {
+      return subtopicsList;
+    }
+  }
+
+  Future<List<Data>> searchcountry() async {
+    if (searchcountryfirst) {
+      String url = 'https://gscrape.xeeve.com/api/config?lang=en_US';
+//    String url =   "http://gscrape.xeeve.com/api/searchgroup?topicid[]=2&topicid[]=3&lang=en_US";
+      final response = await http.get(url);
+      print("URL : " + url);
+      if (response.statusCode == 200) {
+        List listresponse = json.decode(response.body)['search']['topics'];
+        await listresponse.forEach((element) async {
+          var Mainmap = new Map<String, dynamic>();
+          await element['childs'].forEach((doc) {
+            var obj = new Map<dynamic, dynamic>();
+            obj['alue'] = false;
+            obj['id'] = doc['id'].toString();
+//                                          obj[listresponse[i]['childs']['id']] =false;
+          });
+          List conteryresponse = json.decode(response.body)['geo']['countries'];
+          await conteryresponse.forEach((element) async {
+            citylist.add(element['name']);
+          });
+          print("citylist " + citylist.length.toString());
+          searchcountryfirst = false;
+        });
+        return subtopicsList;
+      } else {
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        print("Failed to load album " + url);
+        throw Exception('Failed to load album');
+      }
+    } else {
+      return subtopicsList;
+    }
+  }
+
+  Widget UnSelect() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Stack(
           children: <Widget>[
-            HomePage(),
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 0, left: 5, top: 0),
+            Padding(
+              padding: const EdgeInsets.only(left: 30, top: 10),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    showSubtopics = false;
+//                header.add(Padding(
+//                    padding: const EdgeInsets.all(12.0),
+//                    child: Image(
+//                      image: AssetImage("assets/plus.png"),
+//                      width: 30,
+//                      height: 30,
+//                    )));
+                  });
+                },
                 child: Card(
                   shape: RoundedRectangleBorder(
                     side: BorderSide(color: Colors.white70, width: 5),
@@ -266,112 +1278,56 @@ Future<void> _sendAnalyticsEventshowcities(String name) async {
                   semanticContainer: true,
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                   elevation: 20,
-                  child: Container(
-                    height: 35,
-                    width: 160,
-                    decoration: new BoxDecoration(
-                        color: Colors.deepOrange,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.all(Radius.circular(12.0))),
-                    child: Center(
-                      child: Text(
-                        "Place with distance?",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.normal),
-                      ),
-                    ),
+                  child: Image(
+                    fit: BoxFit.fill,
+                    image: AssetImage(CurrentTopic),
+                    width: 89,
+                    height: 90,
                   ),
                 ),
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(top: 10, left: 50, right: 50),
-              alignment: Alignment.centerLeft,
-              child: FlutterSlider(
-                values: [30, 60],
-                rangeSlider: true,
-                max: 100,
-                min: 0,
-                visibleTouchArea: false,
-                trackBar: FlutterSliderTrackBar(
-                  inactiveTrackBarHeight: 14,
-                  activeTrackBarHeight: 10,
-                  inactiveTrackBar: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.black12,
-                    border: Border.all(width: 3, color: Colors.blue),
-                  ),
-                  activeTrackBar: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      color: Colors.blue.withOpacity(0.5)),
-                ),
-                onDragging: (handlerIndex, lowerValue, upperValue) {
-                  _lowerValue = lowerValue;
-                  _upperValue = upperValue;
-                  setState(() {});
-                },
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  showSubtopics = false;
+//                header.add(Padding(
+//                    padding: const EdgeInsets.all(12.0),
+//                    child: Image(
+//                      image: AssetImage("assets/plus.png"),
+//                      width: 30,
+//                      height: 30,
+//                    )));
+                });
+              },
+              icon: new Icon(
+                Icons.close,
+                size: 20,
+                color: Colors.black,
               ),
-            ),
+            )
           ],
         ),
-      ),
-    );
-  }
-
-  Widget UnSelect() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(left: 30, top: 10),
-          child: GestureDetector(
-            onTap: (){
-              setState(() {
-                showSubtopics=false;
-
-              });
-            },
-            child: Card(
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: Colors.white70, width: 5),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              semanticContainer: true,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              elevation: 20,
-              child: Image(
-                fit: BoxFit.fill,
-                image: AssetImage(CurrentTopic),
-                width: 89,
-                height: 90,
-              ),
-            ),
-          ),
-        ),
-    Container(
-      height: 250,
-      child:Subtopics()
-    ),
+        Container(height: 250, child: CheckBoxList()),
         Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             SingleChildScrollView(
               child: Padding(
                 padding:
-                    const EdgeInsets.only(left: 18.0, right: 18.0, top: 8.0),
+                const EdgeInsets.only(left: 18.0, right: 18.0, top: 8.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.only(left: 8, top: 10),
                       child: GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           setState(() {
-                            showSubtopics=true;
-                         CurrentTopic =  "assets/topic_one.png";
+                            showSubtopics = false;
+                            CurrentTopic = "assets/topic_one.png";
+                            CurrentTitle = "Culture";
                           });
                         },
                         child: Card(
@@ -394,10 +1350,11 @@ Future<void> _sendAnalyticsEventshowcities(String name) async {
                     Padding(
                       padding: const EdgeInsets.only(left: 8, top: 10),
                       child: GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           setState(() {
-                            showSubtopics=true;
-                            CurrentTopic =  "assets/topic_two.png";
+                            showSubtopics = false;
+                            CurrentTopic = "assets/topic_two.png";
+                            CurrentTitle = "Fun / kids";
                           });
                         },
                         child: Card(
@@ -420,12 +1377,11 @@ Future<void> _sendAnalyticsEventshowcities(String name) async {
                     Padding(
                       padding: const EdgeInsets.only(left: 8, top: 10),
                       child: GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           setState(() {
-                            showSubtopics=true;
-
-                                CurrentTopic =  "assets/topic_three.png";
-
+                            showSubtopics = false;
+                            CurrentTopic = "assets/topic_three.png";
+                            CurrentTitle = "Nature";
                           });
                         },
                         child: Card(
@@ -452,17 +1408,18 @@ Future<void> _sendAnalyticsEventshowcities(String name) async {
             SingleChildScrollView(
               child: Padding(
                 padding:
-                    const EdgeInsets.only(left: 18.0, right: 18.0, top: 8.0),
+                const EdgeInsets.only(left: 18.0, right: 18.0, top: 8.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.only(left: 8, top: 10),
                       child: GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           setState(() {
-                            showSubtopics=true;
-                            CurrentTopic =  "assets/topic_four.png";
+                            showSubtopics = false;
+                            CurrentTopic = "assets/topic_four.png";
+                            CurrentTitle = "Nightlife";
                           });
                         },
                         child: Card(
@@ -485,11 +1442,12 @@ Future<void> _sendAnalyticsEventshowcities(String name) async {
                     Padding(
                       padding: const EdgeInsets.only(left: 26, top: 10),
                       child: GestureDetector(
-                        onTap: (){
-                        setState(() {
-                          showSubtopics=true;
-                          CurrentTopic =  "assets/topic_fie.png";
-                        });
+                        onTap: () {
+                          setState(() {
+                            showSubtopics = false;
+                            CurrentTopic = "assets/topic_fie.png";
+                            CurrentTitle = "Sport";
+                          });
                         },
                         child: Card(
                           shape: RoundedRectangleBorder(
@@ -511,10 +1469,11 @@ Future<void> _sendAnalyticsEventshowcities(String name) async {
                     Padding(
                       padding: const EdgeInsets.only(left: 26, top: 10),
                       child: GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           setState(() {
-                            showSubtopics=true;
-                            CurrentTopic =  "assets/topic_six.png";
+                            showSubtopics = false;
+                            CurrentTopic = "assets/topic_six.png";
+                            CurrentTitle = "Wellness";
                           });
                         },
                         child: Card(
@@ -544,6 +1503,70 @@ Future<void> _sendAnalyticsEventshowcities(String name) async {
     );
   }
 
+  Widget selectedTopicsForHeader(bool showicon, int i, String name) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 22, top: 0),
+      child: Card(
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.white70, width: 5),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        semanticContainer: true,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        elevation: 20,
+        child: Container(
+          height: 35,
+          width: name.length <= 6 ? 95 : name.length <= 9 ? 120 : 190,
+          decoration: new BoxDecoration(
+              color: Colors.grey,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.all(Radius.circular(4.0))),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Center(
+                    child: Text(
+                      name,
+                      textAlign: TextAlign.center,
+                      style:
+                      TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  showicon ? IconButton(
+                      icon: new Icon(
+                        Icons.close,
+                        size: 15,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          subtopicsList[i].contents[name]['alue'] = false;
+                        });
+                      }) : IconButton(
+                      icon: new Icon(
+                        Icons.close,
+                        size: 15,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        print("DistanceListClear");
+                        setState(() {
+                          distancetrue = false;
+                          distanceList.clear();
+                        });
+                      }),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget Select() {
     return Column(
       children: <Widget>[
@@ -556,12 +1579,12 @@ Future<void> _sendAnalyticsEventshowcities(String name) async {
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 10),
                   child: GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       setState(() {
-                        showSubtopics=true;
-                      CurrentTopic = "assets/topic_one.png";
+                        showSubtopics = true;
+                        CurrentTopic = "assets/topic_one.png";
+                        CurrentTitle = "Culture";
                       });
-
                     },
                     child: Card(
                       shape: RoundedRectangleBorder(
@@ -583,10 +1606,11 @@ Future<void> _sendAnalyticsEventshowcities(String name) async {
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 10),
                   child: GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       setState(() {
-                        showSubtopics=true;
+                        showSubtopics = true;
                         CurrentTopic = "assets/topic_two.png";
+                        CurrentTitle = "Fun / kids";
                       });
                     },
                     child: Card(
@@ -609,10 +1633,11 @@ Future<void> _sendAnalyticsEventshowcities(String name) async {
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 10),
                   child: GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       setState(() {
-                        showSubtopics=true;
+                        showSubtopics = true;
                         CurrentTopic = "assets/topic_three.png";
+                        CurrentTitle = "Nature";
                       });
                     },
                     child: Card(
@@ -645,10 +1670,11 @@ Future<void> _sendAnalyticsEventshowcities(String name) async {
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 10),
                   child: GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       setState(() {
-                        showSubtopics=true;
+                        showSubtopics = true;
                         CurrentTopic = "assets/topic_four.png";
+                        CurrentTitle = "Nightlife";
                       });
                     },
                     child: Card(
@@ -671,10 +1697,11 @@ Future<void> _sendAnalyticsEventshowcities(String name) async {
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 10),
                   child: GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       setState(() {
-                        showSubtopics=true;
+                        showSubtopics = true;
                         CurrentTopic = "assets/topic_fie.png";
+                        CurrentTitle = "Sport";
                       });
                     },
                     child: Card(
@@ -697,10 +1724,11 @@ Future<void> _sendAnalyticsEventshowcities(String name) async {
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 10),
                   child: GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       setState(() {
-                        showSubtopics=true;
+                        showSubtopics = true;
                         CurrentTopic = "assets/topic_six.png";
+                        CurrentTitle = "Wellness";
                       });
                     },
                     child: Card(
@@ -730,579 +1758,198 @@ Future<void> _sendAnalyticsEventshowcities(String name) async {
 
   List MainHeading = [];
 
-  Widget MainHeadingCards() {
-    MainHeading = getCheckboxnames();
-
-    return Container(
-        height: 60,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: MainHeading.length,
-          itemBuilder: (BuildContext context, int i) => GestureDetector(
-            onTap: () {
-//
-              setState(() {});
-            },
+  Widget selectedtopic(i, String name) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 22, top: 0),
+      child: Card(
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.white70, width: 5),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        semanticContainer: true,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        elevation: 20,
+        child: Container(
+          height: 35,
+          width: name.length <= 6 ? 90 : name.length <= 9 ? 130 : 160,
+          decoration: new BoxDecoration(
+              color: Colors.grey,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.all(Radius.circular(4.0))),
+          child: Center(
             child: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Card(
-                color: Colors.red,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(22.0),
-                    side: BorderSide(color: Colors.red, width: 1)),
-                elevation: 5,
-                child: Container(
-                  width: 200,
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        width: 150,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 20, top: 10),
-                          child: Center(
-                            child: Text(
-                              MainHeading[i],
-                              style:
-                                  TextStyle(fontSize: 20, color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ),
-//                                        new IconButton(
-//                                            icon: new Icon(Icons.close
-//                                            ,color: Colors.white,),
-//                                            onPressed: () {
-//
-//var currentPos = getHeading(MainHeading[i]);
-//                                              setState(() {
-//                                                subtopicsList[currentPos]
-//                                                    .contents[ MainHeading[i]]['alue'] =
-//                                                    false;
-//
-//                                              });
-//
-//
-//                                            }
-//                                        ),
-                    ],
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    name,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal),
                   ),
+                  IconButton(
+                      icon: new Icon(
+                        Icons.close,
+                        size: 15,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          if (countryList.length <= 1) {
+                            countryList.clear();
+                            searchname.clear();
+                            searchtrue = false;
+                          } else {
+                            countryList.removeAt(i);
+                            searchname.removeAt(i);
+                          }
+                        });
+                      }),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> getselectedheader() {
+    var tmpArray = [];
+    List<Widget> header2 = [];
+    for (int i = 0; i < subtopicsList.length; i++) {
+      subtopicsList[i].contents.forEach((key, value) {
+        if (subtopicsList[i].contents[key]['alue'] == true) {
+          header2.add(selectedTopicsForHeader(true, i, key));
+        }
+      });
+    }
+    return header2;
+  }
+}
+  class LeaderBoard {
+    LeaderBoard(this.username, this.score);
+
+    final String username;
+    final double score;
+  }
+  class SelectedItemWidget extends StatelessWidget {
+    const SelectedItemWidget(this.selectedItem, this.deleteSelectedItem);
+
+    final LeaderBoard selectedItem;
+    final VoidCallback deleteSelectedItem;
+
+    @override
+    Widget build(BuildContext context) {
+      return Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 2,
+          horizontal: 4,
+        ),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  top: 8,
+                  bottom: 8,
+                ),
+                child: Text(
+                  selectedItem.username,
+                  style: const TextStyle(fontSize: 14),
                 ),
               ),
             ),
-          ),
-        ));
+            IconButton(
+              icon: Icon(Icons.delete_outline, size: 22),
+              color: Colors.grey[700],
+              onPressed: deleteSelectedItem,
+            ),
+          ],
+        ),
+      );
+    }
+
   }
+  class MyTextField extends StatelessWidget {
+    const MyTextField(this.controller, this.focusNode, this.text);
 
-//  Widget ProjectTiles() {
-//    List bar;
-//    return FutureBuilder(
-//        future: Fetchsubtopics(),
-//        builder: (BuildContext context, AsyncSnapshot<List<Data>> dataList) {
-//          if (firsttime) {
-//            if (!dataList.hasData)
-//              return Padding(
-//                padding: const EdgeInsets.only(top: 28.0),
-//                child: Center(
-//                  child: CircularProgressIndicator(
-//                    backgroundColor: Colors.amber,
-//                  ),
-//                ),
-//              );
-//          }
-//          return SingleChildScrollView(
-//            physics: ScrollPhysics(),
-//            child: Wrap(children: <Widget>[
-//              ListView.builder(
-//                  shrinkWrap: true,
-//                  physics:  NeverScrollableScrollPhysics(), // new
-//                  itemCount: subtopicsList.length,
-//                  itemBuilder: (context, i) {
-//                    var counter=0;
-//                    print("ListView" + subtopicsList.length.toString());
-//                       return Column(
-//                         mainAxisAlignment: MainAxisAlignment.start,
-//                          crossAxisAlignment: CrossAxisAlignment.start,
-//                          children: subtopicsList[i]
-//                              .contents
-//                              .keys
-//                              .map((String key) {
-//                            return CheckboxListTile(
-//                              title: new Text(
-//                                "$key",
-//                                style: TextStyle(
-//                                  shadows: [
-//                                    Shadow(
-//                                      blurRadius: 110,
-//                                      color: Colors.grey,
-//                                      offset: Offset(4.0, 4.0),
-//                                    ),
-//                                  ],
-//                                ),
-//                              ),
-//                              value: subtopicsList[i].contents[key]['alue'],
-//                              activeColor: Colors.pink,
-//                              checkColor: Colors.white,
-//                              onChanged: (bool value) {
-////
-//                                if (MainHeading.length == 6) {
-//                                  Scaffold.of(context)
-//                                      .showSnackBar(new SnackBar(
-//                                    content: new Text(
-//                                        "you reached the max number of filters. remove some filters to add new ones"),
-//                                  ));
-//                                }
-//                                setState(() {
-//                                  subtopicsList[i].contents[key]['alue'] =
-//                                      value;
-//                                  firsttime = false;
-//                                  showtext = false;
-//                                });
-//                              },
-//                            );
-//                          }).toList(),
-//                       );
-//
-//                  })
-//            ]),
-//          );
-//        });
-//  }
+    final TextEditingController controller;
+    final FocusNode focusNode;
+    final String text;
 
-
-}
-
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  List<LeaderBoard> list = <LeaderBoard>[
-    LeaderBoard("Andorra", 54),
-    LeaderBoard("United Arab Emirates", 22.5),
-    LeaderBoard("Afghanistan", 24.7),
-    LeaderBoard("Antigua and Barbuda", 22.1),
-    LeaderBoard("Anguilla", 54),
-    LeaderBoard("Albania", 22.5),
-    LeaderBoard("Armenia", 24.7),
-    LeaderBoard("Angola", 22.1),
-    LeaderBoard("Antarctica", 54),
-    LeaderBoard("Argentina", 22.5),
-    LeaderBoard("Austria", 24.7),
-    LeaderBoard("Australia", 22.1),
-    LeaderBoard("Aruba", 54),
-    LeaderBoard("Aland Islands", 22.5),
-    LeaderBoard("Azerbaijan", 24.7),
-    LeaderBoard("Bosnia and Herzegovina", 22.1),
-    LeaderBoard("Barbados", 54),
-    LeaderBoard("Bangladesh", 22.5),
-    LeaderBoard("Belgium", 24.7),
-    LeaderBoard("Burkina Faso", 22.1),
-    LeaderBoard("Bulgaria", 54),
-    LeaderBoard("Bahrain", 22.5),
-    LeaderBoard("Burundi", 24.7),
-    LeaderBoard("Benin", 22.1),
-    LeaderBoard("Bermuda", 54),
-    LeaderBoard("Brunei", 22.5),
-    LeaderBoard("Bolivia", 24.7),
-    LeaderBoard("Bonaire, Saint Eustatius and Saba", 22.1),
-    LeaderBoard("Brazil", 54),
-    LeaderBoard("Bahamas", 22.5),
-    LeaderBoard("Bhutan", 24.7),
-    LeaderBoard("Bouvet Island", 22.1),
-    LeaderBoard("Belarus", 54),
-    LeaderBoard("Belize", 22.5),
-    LeaderBoard("Canada", 24.7),
-    LeaderBoard("Cocos Islands", 22.1),
-    LeaderBoard("Democratic Republic of the Congo", 54),
-    LeaderBoard("Central African Republic", 22.5),
-    LeaderBoard("Republic of the Congo", 24.7),
-    LeaderBoard("Switzerland", 22.1),
-    LeaderBoard("Ivory Coast", 54),
-    LeaderBoard("Cook Islands", 22.5),
-    LeaderBoard("Chile", 24.7),
-    LeaderBoard("Cameroon", 22.1),
-    LeaderBoard("Colombia", 54),
-    LeaderBoard("Costa Rica", 22.5),
-    LeaderBoard("Cuba", 24.7),
-    LeaderBoard("Cabo Verde", 22.1),
-    LeaderBoard("Cabo Verde", 54),
-    LeaderBoard("Curacao", 22.5),
-    LeaderBoard("Christmas Island", 24.7),
-    LeaderBoard("Cyprus", 22.1),
-    LeaderBoard("Czechia", 54),
-    LeaderBoard("Germany", 22.5),
-    LeaderBoard("Denmark", 24.7),
-    LeaderBoard("Dominica", 22.1),
-    LeaderBoard("Algeria", 54),
-    LeaderBoard("Ecuador", 22.5),
-    LeaderBoard("Estonia", 24.7),
-    LeaderBoard("Egypt", 22.1),
-    LeaderBoard("Western Sahara", 22.5),
-    LeaderBoard("Eritrea", 24.7),
-    LeaderBoard("Spain", 22.1),
-    LeaderBoard("Ethiopia", 54),
-    LeaderBoard("Finland", 22.5),
-    LeaderBoard("Fiji", 24.7),
-    LeaderBoard("Falkland Islands", 22.1),
-    LeaderBoard("France", 54),
-    LeaderBoard("Gabon", 22.5),
-    LeaderBoard("United Kingdom", 24.7),
-    LeaderBoard("Grenada", 22.1),
-    LeaderBoard("Georgia", 54),
-    LeaderBoard("French Guiana", 22.5),
-    LeaderBoard("Guernsey", 24.7),
-    LeaderBoard("Ghana", 22.1),
-    LeaderBoard("Gibraltar", 54),
-    LeaderBoard("Greenland", 22.5),
-    LeaderBoard("Gambia", 24.7),
-    LeaderBoard("Guinea", 22.1),
-    LeaderBoard("Guadeloupe", 54),
-    LeaderBoard("Equatorial Guinea", 22.5),
-    LeaderBoard("Greece", 24.7),
-    LeaderBoard("South Georgia and the South Sandwich Islands", 22.1),
-    LeaderBoard("Guatemala", 22.5),
-    LeaderBoard("Guam", 24.7),
-    LeaderBoard("Guinea-Bissau", 22.1),
-    LeaderBoard("Guyana", 54),
-    LeaderBoard("Hong Kong", 22.5),
-    LeaderBoard("Heard Island and McDonald Islands", 24.7),
-    LeaderBoard("Honduras", 22.1),
-    LeaderBoard("Haiti", 54),
-    LeaderBoard("Hungary", 22.5),
-    LeaderBoard("Indonesia", 24.7),
-    LeaderBoard("Ireland", 22.1),
-    LeaderBoard("Israel", 54),
-    LeaderBoard("Isle of Man", 22.5),
-    LeaderBoard("India", 24.7),
-    LeaderBoard("British Indian Ocean Territory", 22.1),
-    LeaderBoard("Iraq", 54),
-    LeaderBoard("Iran", 22.5),
-    LeaderBoard("Iceland", 24.7),
-    LeaderBoard("Italy", 22.1),
-
-    LeaderBoard("Jersey", 22.5),
-    LeaderBoard("Jamaica", 24.7),
-    LeaderBoard("Jordan", 22.1),
-    LeaderBoard("Japan", 54),
-    LeaderBoard("Kenya", 22.5),
-    LeaderBoard("Kyrgyzstan", 24.7),
-    LeaderBoard("Cambodia", 22.1),
-    LeaderBoard("Kiribati", 54),
-    LeaderBoard("Comoros", 22.5),
-    LeaderBoard("North Korea", 24.7),
-    LeaderBoard("South Korea", 22.1),
-    LeaderBoard("Kosovo", 54),
-    LeaderBoard("Kuwait", 22.5),
-    LeaderBoard("Cayman Islands", 24.7),
-    LeaderBoard("Kazakhstan", 22.1),
-    LeaderBoard("Laos", 22.5),
-    LeaderBoard("Lebanon", 24.7),
-  
-
-  ];
-
-  LeaderBoard _selectedItem;
-
-  bool _show = true;
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Column(
-        children: <Widget>[
-          const SizedBox(
-            height: 16,
-          ),
-          SearchWidget<LeaderBoard>(
-            dataList: list,
-            hideSearchBoxWhenItemSelected: false,
-            listContainerHeight: MediaQuery.of(context).size.height / 4,
-            queryBuilder: (query, list) {
-              return list
-                  .where((item) =>
-                      item.username.toLowerCase().contains(query.toLowerCase()))
-                  .toList();
-            },
-            popupListItemBuilder: (item) {
-              return PopupListItemWidget(item);
-            },
-            selectedItemBuilder: (selectedItem, deleteSelectedItem) {
-//                  return SelectedItemWidget(selectedItem, deleteSelectedItem);
-            },
-            // widget customization
-            noItemsFoundWidget: NoItemsFound(),
-            textFieldBuilder: (controller, focusNode) {
-              return MyTextField(controller, focusNode);
-            },
-            onItemSelected: (item) {
-              setState(() {
-                _selectedItem = item;
-              });
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class LeaderBoard {
-  LeaderBoard(this.username, this.score);
-
-  final String username;
-  final double score;
-}
-
-class SelectedItemWidget extends StatelessWidget {
-  const SelectedItemWidget(this.selectedItem, this.deleteSelectedItem);
-
-  final LeaderBoard selectedItem;
-  final VoidCallback deleteSelectedItem;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 2,
-        horizontal: 4,
-      ),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: 16,
-                right: 16,
-                top: 8,
-                bottom: 8,
-              ),
-              child: Text(
-                selectedItem.username,
-                style: const TextStyle(fontSize: 14),
+    @override
+    Widget build(BuildContext context) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        child: TextField(
+          controller: controller,
+          focusNode: focusNode,
+          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+          decoration: InputDecoration(
+            enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Color(0x4437474F),
               ),
             ),
-          ),
-          IconButton(
-            icon: Icon(Icons.delete_outline, size: 22),
-            color: Colors.grey[700],
-            onPressed: deleteSelectedItem,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class MyTextField extends StatelessWidget {
-  const MyTextField(this.controller, this.focusNode);
-
-  final TextEditingController controller;
-  final FocusNode focusNode;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: TextField(
-        controller: controller,
-        focusNode: focusNode,
-        style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-        decoration: InputDecoration(
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Color(0x4437474F),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Theme
+                  .of(context)
+                  .primaryColor),
+            ),
+            suffixIcon: Icon(Icons.search),
+            border: InputBorder.none,
+            hintText: text,
+            contentPadding: const EdgeInsets.only(
+              left: 16,
+              right: 20,
+              top: 14,
+              bottom: 14,
             ),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).primaryColor),
-          ),
-          suffixIcon: Icon(Icons.search),
-          border: InputBorder.none,
-          hintText: "Search here...",
-          contentPadding: const EdgeInsets.only(
-            left: 16,
-            right: 20,
-            top: 14,
-            bottom: 14,
-          ),
         ),
-      ),
-    );
+      );
+    }
   }
-}
-
-class NoItemsFound extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Icon(
-          Icons.folder_open,
-          size: 24,
-          color: Colors.grey[900].withOpacity(0.7),
-        ),
-        const SizedBox(width: 10),
-        Text(
-          "No Items Found",
-          style: TextStyle(
-            fontSize: 16,
+  class NoItemsFound extends StatelessWidget {
+    @override
+    Widget build(BuildContext context) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(
+            Icons.folder_open,
+            size: 24,
             color: Colors.grey[900].withOpacity(0.7),
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class PopupListItemWidget extends StatelessWidget {
-  const PopupListItemWidget(this.item);
-
-  final LeaderBoard item;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      child: Text(
-        item.username,
-        style: const TextStyle(fontSize: 16),
-      ),
-    );
-  }
-}
-class Subtopics extends StatefulWidget {
-  @override
-  _SubtopicsState createState() => _SubtopicsState();
-}
-
-class _SubtopicsState extends State<Subtopics> {
-  bool firsttime = true;
-  List<Data> subtopicsList = new List();
-
-  Widget ProjectTiles() {
-    List bar;
-    return FutureBuilder(
-        future: Fetchsubtopics(),
-        builder: (BuildContext context, AsyncSnapshot<List<Data>> dataList) {
-          if (firsttime) {
-            if (!dataList.hasData)
-              return Padding(
-                padding: const EdgeInsets.only(top: 28.0),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.amber,
-                  ),
-                ),
-              );
-          }
-          return SingleChildScrollView(
-            physics: ScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.only(left:18.0,right: 18.0),
-              child: Wrap(children: <Widget>[
-                ListView.builder(
-                    shrinkWrap: true,
-                    physics:  NeverScrollableScrollPhysics(), // new
-                    itemCount: subtopicsList.length,
-                    itemBuilder: (context, i) {
-                      var counter=0;
-                      print("ListView" + subtopicsList.length.toString());
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: subtopicsList[i]
-                            .contents
-                            .keys
-                            .map((String key) {
-                          return CheckboxListTile(
-                            title: new Text(
-                              "$key",
-                              style: TextStyle(
-                                shadows: [
-                                  Shadow(
-                                    blurRadius: 110,
-                                    color: Colors.grey,
-                                    offset: Offset(4.0, 4.0),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            value: subtopicsList[i].contents[key]['alue'],
-                            activeColor: Colors.pink,
-                            checkColor: Colors.white,
-                            onChanged: (bool value) {
-//
-//                            if (MainHeading.length == 6) {
-//                              Scaffold.of(context)
-//                                  .showSnackBar(new SnackBar(
-//                                content: new Text(
-//                                    "you reached the max number of filters. remove some filters to add new ones"),
-//                              ));
-//                            }
-                              setState(() {
-                                subtopicsList[i].contents[key]['alue'] =
-                                    value;
-                                firsttime = false;
-//                              showtext = false;
-                              });
-                            },
-                          );
-                        }).toList(),
-                      );
-
-                    })
-              ]),
+          const SizedBox(width: 10),
+          Text(
+            "No Items Found",
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[900].withOpacity(0.7),
             ),
-          );
-        });
+          ),
+        ],
+      );
+    }
   }
+  class PopupListItemWidget extends StatelessWidget {
+  const PopupListItemWidget(this.item);
+  final String item;
   @override
   Widget build(BuildContext context) {
-    return ProjectTiles();
+  return Container(
+  padding: const EdgeInsets.all(12),
+  child: Text(
+  item,
+  style: const TextStyle(fontSize: 16),
+  ),
+  );
   }
-  Future<List<Data>> Fetchsubtopics() async {
-    if (firsttime) {
-      var obj = new Map<dynamic, dynamic>();
-      var Mainmap = new Map<String, dynamic>();
-      String url = 'https://gscrape.xeeve.com/api/config?lang=en_US';
-//    String url =   "http://gscrape.xeeve.com/api/searchgroup?topicid[]=2&topicid[]=3&lang=en_US";
-      final response = await http.get(url);
-      print("URL : " + url);
-      if (response.statusCode == 200) {
-        // If the server did return a 200 OK response,
-        // then parse the JSON.
-        print("Response : " + response.body);
-        List listresponse = json.decode(response.body)['search']['topics'];
-        await listresponse.forEach((element) async {
-          var Mainmap = new Map<String, dynamic>();
-          await element['childs'].forEach((doc) {
-            var obj = new Map<dynamic, dynamic>();
-
-            obj['alue'] = false;
-            obj['id'] = doc['id'].toString();
-//                                          obj[listresponse[i]['childs']['id']] =false;
-            print("TEXT VIEW" + doc.toString());
-            Mainmap[doc['name']] = obj;
-
-            print("TEXT VIEW umer" + subtopicsList.length.toString());
-          });
-          await subtopicsList.add(
-//
-              new Data(element['name'], Mainmap));
-        });
-        print("Mainmap " + Mainmap.length.toString());
-
-        return subtopicsList;
-        return json.decode(response.body);
-      } else {
-        // If the server did not return a 200 OK response,
-        // then throw an exception.
-        print("Failed to load album " + url);
-        throw Exception('Failed to load album');
-      }
-    } else {}
   }
-}
+

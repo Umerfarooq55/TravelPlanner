@@ -57,9 +57,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   void initState() {
-//    Future.delayed(const Duration(milliseconds: 1000), () {
-//      dialog();
-//    });
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      dialog();
+    });
   }
 }
 
@@ -70,7 +70,7 @@ class Page extends StatelessWidget {
   Future<void> _sendAnalyticsEvent(String name) async {
 
     await analytics.logEvent(
-      name: 'Skip_Lgin',
+      name: 'login_skip',
       parameters: <String, dynamic>{
         'skip':"yes",
 

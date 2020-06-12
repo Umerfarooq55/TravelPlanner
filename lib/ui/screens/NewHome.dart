@@ -66,7 +66,7 @@ class _NewHomeState extends State<NewHome> {
           leading: new IconButton(
               icon: new Icon(Icons.menu),
               onPressed: () => _scaffoldKey.currentState.openDrawer()),
-          title: Text("Home"),
+          title: Text("Travel Planner"),
           centerTitle: true,
         ),
         drawer: Drawer(
@@ -127,19 +127,8 @@ class _NewHomeState extends State<NewHome> {
           ),
         ),
         body:
+        Topics());
 
-
-
-
-        Topics()
-
-
-
-
-
-
-
-    );
 
   }
   Future<CityModel> fetchAlbum() async {

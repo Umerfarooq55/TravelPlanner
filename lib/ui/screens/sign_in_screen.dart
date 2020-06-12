@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:onboarding_flow/ui/widgets/custom_flat_button.dart';
 import 'package:onboarding_flow/ui/widgets/custom_alert_dialog.dart';
 import 'package:onboarding_flow/models/user.dart';
-
+import 'package:onboarding_flow/ui/screens/NewHome.dart';
 import 'Feedback.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -210,7 +210,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Future<void> _sendAnalyticsEvent(String name) async {
 
     await analytics.logEvent(
-      name: 'Login_Success',
+      name: 'login_ok',
       parameters: <String, dynamic>{
         'UserEmail':name,
 
@@ -227,7 +227,11 @@ class _SignInScreenState extends State<SignInScreen> {
         await Auth.signIn(email, password)
             .then((uid) =>
         _sendAnalyticsEvent(uid).then((value) =>
-            Navigator.of(context).pushNamed("/main")
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>
+                    NewHome(true))
+            )
         ));
 
       } catch (e) {

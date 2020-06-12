@@ -63,7 +63,7 @@ class HomeState extends State<HomeDetailsserp> {
   Future<void> _sendAnalyticsEvent(String name) async {
 
     await analytics.logEvent(
-      name: 'MapSerp',
+      name: 'city_serp_details',
       parameters: <String, dynamic>{
         'UserinMapSerp':"yes",
 

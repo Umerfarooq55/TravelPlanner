@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onboarding_flow/ui/screens/NewHome.dart';
 import 'package:onboarding_flow/ui/screens/welcome_screen.dart';
 import 'package:onboarding_flow/ui/screens/main_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,7 +21,7 @@ class _RootScreenState extends State<RootScreen> {
           );
         } else {
           if (snapshot.hasData) {
-            return new MainScreen(
+            return new NewHome(
              true
             );
           } else {

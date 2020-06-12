@@ -57,7 +57,58 @@ class _HomePageState extends State<DetailPage> {
   Future<void> _sendAnalyticsEvent(String name) async {
 
     await analytics.logEvent(
-      name: 'CityDetailsPage',
+      name: 'home_city',
+      parameters: <String, dynamic>{
+        'UserinCityDetailsPage':"yes",
+
+      },
+    );
+  }
+  Future<void> city_near() async {
+
+    await analytics.logEvent(
+      name: 'city_near',
+      parameters: <String, dynamic>{
+        'UserinCityDetailsPage':"yes",
+
+      },
+    );
+  }
+  Future<void> city_description() async {
+
+    await analytics.logEvent(
+      name: 'city_description',
+      parameters: <String, dynamic>{
+        'UserinCityDetailsPage':"yes",
+
+      },
+    );
+  }
+  Future<void> city_bookmarked() async {
+
+
+  }
+  Future<void> city_serp_details() async {
+
+    await analytics.logEvent(
+      name: 'city_bookmarked',
+      parameters: <String, dynamic>{
+        'UserinCityDetailsPage':"yes",
+
+      },
+    );
+  }
+  Future<void> city_bookmark_rome(String name) async {
+
+    await analytics.logEvent(
+      name: 'city_bookmark_$name',
+      parameters: <String, dynamic>{
+        'UserinCityDetailsPage':"yes",
+
+      },
+    );
+    await analytics.logEvent(
+      name: 'city_bookmarked',
       parameters: <String, dynamic>{
         'UserinCityDetailsPage':"yes",
 
@@ -95,12 +146,12 @@ class _HomePageState extends State<DetailPage> {
 
           ],
           title: new Text(
-              widget.list2.length > 2 ?
+              widget.list2.isNotEmpty?widget.list2.length > 2 ?
               "Cities for " + "" + widget.list2[0] + ", " + widget.list2[1] +
                   " " + widget.list2[2]
                   : widget.list2.length > 1 ? "Cities for " + "" +
                   widget.list2[0] + ", " + widget.list2[1] :
-              "Cities for " + "" + widget.list2[0],
+              "Cities for " + "" + widget.list2[0]:"City Details",
               style: new TextStyle(
                   fontSize: 15.0,
                   fontWeight: FontWeight.bold,
@@ -160,12 +211,12 @@ class _HomePageState extends State<DetailPage> {
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Center(
-                      child: new Text(widget.list2.length > 2 ?
+                      child: new Text(widget.list2.isNotEmpty?widget.list2.length > 2 ?
                       "Near cities for " + "" + widget.list2[0] + ", " + widget.list2[1] +
                           " " + widget.list2[2]
                           : widget.list2.length > 1 ? "Near cities for " + "" +
                           widget.list2[0] + ", " + widget.list2[1] :
-                      "Near cities for " + "" + widget.list2[0]
+                      "Near cities for " + "" + widget.list2[0] :""
                           ,
                            textAlign: TextAlign.center,
                           style: new TextStyle(
@@ -185,6 +236,7 @@ class _HomePageState extends State<DetailPage> {
   }
 
   _toggleShouldExpand() {
+    shouldExpand? city_description():null;
     setState(() {
       shouldExpand = !shouldExpand;
       expandText = shouldExpand ? 'Close' : 'Details';
@@ -344,7 +396,7 @@ class _HomePageState extends State<DetailPage> {
                   ),
                 ),
 
-                        Padding(
+                       widget.list2.isNotEmpty? Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Center(
                             child: new Text(
@@ -354,9 +406,9 @@ class _HomePageState extends State<DetailPage> {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black)),
                           ),
-                        ),
+                        ):Container(),
                         getSERPgetSERPdetails(context, id),
-                        Padding(
+                       widget.list2.isNotEmpty? Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Center(
                             child: new Text(
@@ -366,7 +418,7 @@ class _HomePageState extends State<DetailPage> {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black)),
                           ),
-                        ),
+                        ):Container(),
                         getSERPgetSERP(context, id),
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
@@ -516,6 +568,7 @@ class _HomePageState extends State<DetailPage> {
     places['city']=places['info']['name'];
 
     if(u!= null) {
+      city_bookmark_rome(places['info']['name']);
       print("Curren Doc "+document);
       if(document=="noDocument"){
         Firestore.instance
@@ -779,6 +832,8 @@ height: 40,
 
                       GestureDetector(
                         onTap: (){
+
+                          city_near();
                           Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) =>

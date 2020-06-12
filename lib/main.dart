@@ -1,7 +1,9 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
+
 import 'package:onboarding_flow/ui/pages/homepage.dart';
 import 'package:onboarding_flow/ui/pages/main.dart';
 import 'package:onboarding_flow/ui/screens/NewHome.dart';
@@ -12,8 +14,26 @@ import 'package:onboarding_flow/ui/screens/sign_up_screen.dart';
 import 'package:onboarding_flow/ui/screens/main_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:smartlook/smartlook.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:launch_review/launch_review.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) {
+  if (message.containsKey('data')) {
+    // Handle data message
+
+    final dynamic data = message['data'];
+    print("Notification data "+data);
+  }
+
+  if (message.containsKey('notification')) {
+    // Handle notification message
+    print("Notification notification "+message.toString());
+  }
+
+  // Or do other work.
+}
+
 void main() {
 //  Firestore.instance.settings(timestampsInSnapshotsEnabled: true);
 
@@ -21,51 +41,110 @@ void main() {
 
 }
 
-class MyApp extends StatelessWidget {
-  final SharedPreferences prefs;
-  MyApp({this.prefs});
+class MyApp extends StatefulWidget {
+  State<MyApp> createState() => _MyAppState();
+}
+
+  class _MyAppState extends State<MyApp> {
+    final SharedPreferences prefs;
+    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+    var flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    _MyAppState({this.prefs});
     FirebaseAnalytics analytics = FirebaseAnalytics();
-  @override
+
+    @override
+    void initState() {
+      Smartlook.setupAndStartRecording('55605be6e53ad028d933930c3f1aa498a686a6e0');
+      _firebaseMessaging.getToken().then((token) async {
+
+        print("Main Token "+ token);
+
+      });
+      _firebaseMessaging.configure(
+
+        onMessage: (Map<String, dynamic> message) async {
+          print("onMessage: $message");
+        print("Notification "+message.toString());
+//
+          final dynamic notification = message['notification'];
+            _showNotification(notification["title"], notification["body"],
+                notification["corname"],true);
+
+        },
+        onLaunch: (Map<String, dynamic> message) async {
+          print("onLaunch: $message");
+          // TODO optional
+        },
+        onResume: (Map<String, dynamic> message) async {
+          print("onResume: $message");
+          // TODO optional
+        },
+      );
+
+      var initializationSettingsAndroid =
+      AndroidInitializationSettings('launch_background');
+      var initializationSettingsIOS = IOSInitializationSettings();
+      var initializationSettings = InitializationSettings(
+          initializationSettingsAndroid, initializationSettingsIOS);
+      flutterLocalNotificationsPlugin.initialize(initializationSettings,
+          onSelectNotification: onSelectNotification);
+    }
+    Future _showNotification(String requesttype , String body,String name,bool type) async {
+      var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+          'your channel id', 'your channel name', 'your channel description',
+          importance: Importance.Max, priority: Priority.High);
+      var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+      var platformChannelSpecifics = NotificationDetails(
+          androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+
+//    await flutterLocalNotificationsPlugin.show(
+//        0, 'plain title', 'plain body', platformChannelSpecifics,
+//        payload: 'item x');
+
+      String trendingNewsId = '5';
+      await flutterLocalNotificationsPlugin.show(
+          0, requesttype, body,
+          platformChannelSpecifics,
+          payload: trendingNewsId);
+    }
+    Future onSelectNotification(String payload) async {
+
+    }
+    @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      navigatorObservers: [
-        FirebaseAnalyticsObserver(analytics: analytics),
-      ],
-      debugShowCheckedModeBanner: false,
-      routes: <String, WidgetBuilder>{
-        '/walkthrough': (BuildContext context) => new WalkthroughScreen(),
-        '/root': (BuildContext context) => new RootScreen(),
-        '/signin': (BuildContext context) => new SignInScreen(),
-        '/signup': (BuildContext context) => new SignUpScreen(),
-        '/main': (BuildContext context) => new NewHome(true),
+  return MaterialApp(
+  title: 'Flutter Demo',
+  navigatorObservers: [
+  FirebaseAnalyticsObserver(analytics: analytics),
+  ],
+  debugShowCheckedModeBanner: false,
+  routes: <String, WidgetBuilder>{
+  '/walkthrough': (BuildContext context) => new WalkthroughScreen(),
+  '/root': (BuildContext context) => new RootScreen(),
+  '/signin': (BuildContext context) => new SignInScreen(),
+  '/signup': (BuildContext context) => new SignUpScreen(),
+  '/main': (BuildContext context) => new NewHome(true),
 
 
 
-      },
-      theme: ThemeData(
-        primaryColor: Colors.white,
-        primarySwatch: Colors.grey,
-      ),
-      home: HandleState(),
-    );
+  },
+  theme: ThemeData(
+  primaryColor: Colors.white,
+  primarySwatch: Colors.grey,
+  ),
+  home: HandleState(),
+  );
   }
 
 
-}
-class MyApp2 extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        //
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
   }
-}
+
+
+
+
+
+
+
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
