@@ -48,6 +48,12 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
 
+
+
+
+  video_player: "0.10.11+1"
+  store_redirect: 1.0.2
+
 dev_dependencies:
   flutter_launcher_icons: "^0.7.3"
   flutter_test:
@@ -96,7 +102,10 @@ flutter:
     - assets/search-nation.png
     - assets/search-distance.png
     - assets/search-interests.png
-
+    - assets/teavel.png
+    - assets/travel_one.png
+    - assets/travel_two.png
+    - assets/travel_three.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -4,10 +4,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:launch_review/launch_review.dart';
+import 'package:onboarding_flow/ui/screens/Beforevideo.dart';
 import 'package:onboarding_flow/ui/screens/NewHome.dart';
 import 'package:onboarding_flow/ui/screens/main_screen.dart';
 import 'package:onboarding_flow/ui/widgets/custom_flat_button.dart';
 import 'package:package_info/package_info.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+
+import 'package:onboarding_flow/ui/screens/BackgroundVideo.dart';
+
+
+
 
 
 class WelcomeScreen extends StatefulWidget {
@@ -51,9 +59,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   void initState() {
-//    Future.delayed(const Duration(milliseconds: 1000), () {
-//      dialog();
-//    });
+    Future.delayed(const Duration(milliseconds: 2000), () {
+
+// Here you can write your code
+dialog();
+    });
   }
 }
 
@@ -119,6 +129,12 @@ class Page extends StatelessWidget {
     print("packageInfo:  "+packageInfo.version);
     return double.parse(packageInfo.version);
   }
+  Future<SharedPreferences> LoadPref() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+
+    return pref;
+  }
   FutureBuilder Update(){
 
     return FutureBuilder(
@@ -135,9 +151,7 @@ class Page extends StatelessWidget {
       if(!snapshot.hasData) Container();
          if(snapshot.data!=null){
            double currentmobileapp = double.parse( snapshot.data['current'].toString());
-           print("currentmobile $currentmobileapp ");
-           print("currentmobile :: $usermobileapp");
-           if(2>=1){
+           if(usermobileapp>=currentmobileapp){
              return Column(
                children: <Widget>[
                  Padding(
@@ -208,15 +222,26 @@ class Page extends StatelessWidget {
                        fontWeight: FontWeight.w700,
                        textColor: Colors.white,
                        onPressed: () {
-                         _sendAnalyticsEvent("").then((value) =>
-                             Navigator.push(
+                        _sendAnalyticsEvent("").then((value) =>
+                        LoadPref().then((value) {
+                          bool seen = (value.getBool('seen') ?? false);
+                          if(seen){
+                            Navigator.push(
                                  context,
                                  MaterialPageRoute(builder: (context) =>
                                      NewHome(false))
-                             )
-                         );
+                             );
+                          }else{
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) =>
+                                    beforeVideo())
+                            );
+                          }
+                        }
+                        ));
 
-
+//
                        },
                        splashColor: Colors.black12,
                        borderColor: Colors.black12,

@@ -8,6 +8,7 @@ import 'package:onboarding_flow/models/user.dart';
 import 'package:onboarding_flow/ui/pages/homepage.dart';
 import 'package:onboarding_flow/ui/model/CityModel.dart';
 import 'package:http/http.dart' as http;
+import 'package:onboarding_flow/ui/screens/BackgroundVideo.dart';
 import 'package:onboarding_flow/ui/screens/UserLike.dart';
 import 'package:onboarding_flow/ui/screens/Feedback.dart';
 import 'package:onboarding_flow/ui/screens/sign_in_screen.dart';
@@ -58,7 +59,7 @@ class _MainScreenState extends State<MainScreen> {
               height:40,
               child: Image(
 
-                image:   AssetImage("assets/newicon.jpg") ,
+                image:   AssetImage("assets/newicon.png") ,
               ),
             ),
           )
@@ -76,6 +77,7 @@ class _MainScreenState extends State<MainScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
+
             new UserAccountsDrawerHeader(
               decoration: BoxDecoration(color: Colors.white),
               currentAccountPicture: new CircleAvatar(
@@ -96,6 +98,7 @@ class _MainScreenState extends State<MainScreen> {
                 );
               },
             ),
+
             ListTile(
               title: Text('Feeback'),
               onTap: () {
@@ -106,6 +109,7 @@ class _MainScreenState extends State<MainScreen> {
                 );
               },
             ),
+
             widget.showlogout?    ListTile(
               title: Text('Log out'),
               onTap: () async {

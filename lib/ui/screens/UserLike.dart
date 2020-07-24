@@ -45,10 +45,10 @@ class _UserLikeState extends State<UserLike> {
             child: getUserLikeBody(context)));
   }
 
-  Future<String> getUID() async {
+  Future<FirebaseUser> getUID() async {
     final FirebaseUser u = await FirebaseAuth.instance.currentUser();
 
-    return u.uid;
+    return u;
   }
 
   getUserLikeBody(BuildContext context) {
@@ -57,22 +57,37 @@ class _UserLikeState extends State<UserLike> {
     return FutureBuilder(
       future: getUID(),
       builder: (BuildContext context, uid) {
-        print("UID : " + uid.data.toString());
+
+
+        if(uid.data==null) return Center(child: Padding(
+          padding: const EdgeInsets.all(42.0),
+          child: Text("You must login to use this feature",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+
+            fontSize: 35,
+            color: Colors.amber
+          ),),
+        ));
         if (!uid.hasData)
+
           return Padding(
             padding: const EdgeInsets.only(top: 28.0),
             child: Center(
               child: CircularProgressIndicator(),
             ),
           );
+        print("UID : " + uid.data.uid.toString());
         return StreamBuilder(
             stream: Firestore.instance
                 .collection("USERS")
-                .document(uid.data.toString())
+                .document(uid.data.uid.toString())
                 .collection("Favrite")
                 .snapshots(), // a previously-obtained Future<String> or null
             builder: (BuildContext context, snapshot) {
+
               if (!snapshot.hasData)
+
                 return Padding(
                   padding: const EdgeInsets.only(top: 28.0),
                   child: Center(
@@ -80,7 +95,7 @@ class _UserLikeState extends State<UserLike> {
                   ),
                 );
 
-              return ListView.builder(
+              return    snapshot.data.documents.length> 0?  ListView.builder(
                   itemCount: snapshot.data.documents.length,
                   padding: EdgeInsets.all(0.0),
                   itemBuilder: (BuildContext context, int i) {
@@ -225,7 +240,7 @@ class _UserLikeState extends State<UserLike> {
                                                       onTap: () {
                                                         Firestore.instance
                                                             .collection("USERS")
-                                                            .document(uid.data)
+                                                            .document(uid.data.uid)
                                                             .collection(
                                                                 "Favrite")
                                                             .document(snapshot
@@ -290,7 +305,18 @@ class _UserLikeState extends State<UserLike> {
                         ),
                       ],
                     );
-                  });
+                  }): Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(38.0),
+                      child: Text("Your list is empty..",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+
+                        fontSize: 35,
+                        color: Colors.amber
+                ),),
+                    ),
+                  );
             });
       },
     );

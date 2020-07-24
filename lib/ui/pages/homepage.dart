@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
                 height:40,
                 child: Image(
 
-                  image:   AssetImage("assets/newicon.jpg") ,
+                  image:   AssetImage("assets/newicon.png") ,
                 ),
               ),
             )

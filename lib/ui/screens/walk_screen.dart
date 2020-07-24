@@ -27,7 +27,7 @@ class WalkthroughScreen extends StatefulWidget {
       title: "",
       color: Color(0xff6495ED),
       description:
-      "Select your interests (eg. hicking, lakes, pubs..",
+      "Select your interests (eg. hicking, lakes, pubs..)",
     ),
     Walkthrough(
       icon: 'assets/images/slide4.png',
@@ -72,116 +72,153 @@ class _WalkthroughScreenState extends State<WalkthroughScreen> {
 
   List<Widget> _getPages(BuildContext context) {
     List<Widget> widgets = [];
-    for (int i = 0; i < widget.pages.length; i++) {
+    List<String> pics=[];
+    pics.add("assets/travel_three.png");
+
+    pics.add("assets/travel_two.png");
+    pics.add("assets/travel_one.png");
+
+    for (int i = 0; i < 3; i++) {
       Walkthrough page = widget.pages[i];
       widgets.add(
         new Container(
-          color:page.color,
+          height: MediaQuery.of(context).size.height,
+          color:Colors.white,
           child: ListView(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 70.0),
-                child: Image(
-                  image: AssetImage(page.icon),
-                  color:Colors.white,
-                  width:125,
-                  height: 125,
-                ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.only(top: 50.0, right: 15.0, left: 15.0),
-                child: Text(
-                  page.title,
-                  softWrap: true,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    decoration: TextDecoration.none,
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: "OpenSans",
+
+              Stack(
+                children: <Widget>[
+
+                  Container(
+                    height:  MediaQuery.of(context).size.height-70,
+                    width:   MediaQuery.of(context).size.width,
+                    child: new DecoratedBox(
+                      decoration: new BoxDecoration(
+                        image: new DecorationImage(
+                            image: new AssetImage(pics[i]),
+                            fit: BoxFit.contain
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Text(
-                  page.description,
-                  softWrap: true,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    decoration: TextDecoration.none,
-                    fontSize: 22.0,
-                    fontWeight: FontWeight.w300,
-                    fontFamily: "OpenSans",
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: page.extraWidget,
+                 i>1? Positioned.fill(
+                    child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child:   CustomFlatButton(
+                          title: " Let's get started!",
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          textColor: Colors.white,
+                          onPressed: () async {
+
+                            Navigator.of(context).pushNamed("/root");
+                          },
+                          splashColor: Colors.black12,
+                          borderColor: Color.fromRGBO(212, 20, 15, 1.0),
+                          borderWidth: 2,
+                          color: Color.fromRGBO(212, 20, 15, 1.0),
+                        ),
+                    ),
+                  ):Container(),
+
+//                  Padding(
+//                    padding:
+//                    const EdgeInsets.only(top: 50.0, right: 15.0, left: 15.0),
+//                    child: Text(
+//                      page.title,
+//                      softWrap: true,
+//                      textAlign: TextAlign.center,
+//                      style: TextStyle(
+//                        color: Colors.white,
+//                        decoration: TextDecoration.none,
+//                        fontSize: 24.0,
+//                        fontWeight: FontWeight.w700,
+//                        fontFamily: "OpenSans",
+//                      ),
+//                    ),
+//                  ),
+//                  Padding(
+//                    padding: const EdgeInsets.all(20.0),
+//                    child: Text(
+//                      page.description,
+//                      softWrap: true,
+//                      textAlign: TextAlign.center,
+//                      style: TextStyle(
+//                        color: Colors.white,
+//                        decoration: TextDecoration.none,
+//                        fontSize: 22.0,
+//                        fontWeight: FontWeight.w300,
+//                        fontFamily: "OpenSans",
+//                      ),
+//                    ),
+//                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: page.extraWidget,
+                  )
+                ],
               )
+
+
             ],
           ),
         ),
       );
     }
-    widgets.add(
-      new Container(
-        color:Color(0xff6495ED),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Image(
-                image: AssetImage('assets/images/slide5.png'),
-                color:Colors.white,
-                width:125,
-                height: 125,
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.only(top: 50.0, right: 15.0, left: 15.0),
-                child: Text(
-                  "Explore those cities, and plan your next trip!",
-                  softWrap: true,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    decoration: TextDecoration.none,
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: "OpenSans",
-                  ),
-                ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.only(top: 20.0, right: 15.0, left: 15.0),
-                child: CustomFlatButton(
-                  title: " Let's get started!",
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  textColor: Colors.white,
-                  onPressed: () async {
-                    SharedPreferences prefs = await SharedPreferences.getInstance();
-                    prefs.setBool('seen', true);
-                    Navigator.of(context).pushNamed("/root");
-                  },
-                  splashColor: Colors.black12,
-                  borderColor: Colors.white,
-                  borderWidth: 2,
-                  color: Color.fromRGBO(212, 20, 15, 1.0),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+//    widgets.add(
+//      new Container(
+//        color:Color(0xffF67280),
+//        child: Center(
+//          child: Column(
+//            mainAxisAlignment: MainAxisAlignment.center,
+//            crossAxisAlignment: CrossAxisAlignment.center,
+//            children: <Widget>[
+//              Image(
+//                image: AssetImage('assets/images/slide5.png'),
+//                color:Colors.white,
+//                width:125,
+//                height: 125,
+//              ),
+//              Padding(
+//                padding:
+//                    const EdgeInsets.only(top: 50.0, right: 15.0, left: 15.0),
+//                child: Text(
+//                  "Explore those cities, and plan your next trip!",
+//                  softWrap: true,
+//                  textAlign: TextAlign.center,
+//                  style: TextStyle(
+//                    color: Colors.white,
+//                    decoration: TextDecoration.none,
+//                    fontSize: 24.0,
+//                    fontWeight: FontWeight.w700,
+//                    fontFamily: "OpenSans",
+//                  ),
+//                ),
+//              ),
+//              Padding(
+//                padding:
+//                    const EdgeInsets.only(top: 50.0, right: 15.0, left: 15.0),
+//                child: CustomFlatButton(
+//                  title: " Let's get started!",
+//                  fontSize: 22,
+//                  fontWeight: FontWeight.w700,
+//                  textColor: Colors.white,
+//                  onPressed: () async {
+//
+//                    Navigator.of(context).pushNamed("/root");
+//                  },
+//                  splashColor: Colors.black12,
+//                  borderColor: Color.fromRGBO(212, 20, 15, 1.0),
+//                  borderWidth: 2,
+//                  color: Color.fromRGBO(212, 20, 15, 1.0),
+//                ),
+//              ),
+//            ],
+//          ),
+//        ),
+//      ),
+//    );
     return widgets;
   }
 
@@ -223,7 +260,7 @@ class _WalkthroughScreenState extends State<WalkthroughScreen> {
   Future<String> getimei() async {
 
      print("GETIMEI");
-    String imei = "IOS";
+    String imei = await "DeviceId";
      print("GETIMEI:  "+imei);
     return imei;
   }

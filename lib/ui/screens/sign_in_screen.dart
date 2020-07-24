@@ -10,6 +10,9 @@ import 'package:onboarding_flow/ui/widgets/custom_flat_button.dart';
 import 'package:onboarding_flow/ui/widgets/custom_alert_dialog.dart';
 import 'package:onboarding_flow/models/user.dart';
 import 'package:onboarding_flow/ui/screens/NewHome.dart';
+import 'package:onboarding_flow/ui/screens/BackgroundVideo.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'Beforevideo.dart';
 import 'Feedback.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -217,21 +220,44 @@ class _SignInScreenState extends State<SignInScreen> {
       },
     );
   }
+  Future<SharedPreferences> LoadPref() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+
+    return pref;
+  }
   void _emailLogin(
       {String email, String password, BuildContext context}) async {
-    if (Validator.validateEmail(email) &&
+    if (Validator.validateEmail(email) ||
         Validator.validatePassword(password)) {
       try {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         _changeBlackVisible();
         await Auth.signIn(email, password)
             .then((uid) =>
-        _sendAnalyticsEvent(uid).then((value) =>
+        _sendAnalyticsEvent(uid).then((value) {
+//            Navigator.push(
+//                context,
+//                MaterialPageRoute(builder: (context) =>
+//                    NewHome(true))
+//            )
+        LoadPref().then((value) {
+          bool seen = (value.getBool('seen') ?? false);
+          if(seen){
             Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) =>
                     NewHome(true))
-            )
+            );
+          }else{
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>
+                    beforeVideo())
+            );
+          }
+            });
+            }
         ));
 
       } catch (e) {

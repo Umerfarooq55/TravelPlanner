@@ -13,8 +13,10 @@ import 'package:onboarding_flow/ui/screens/UserLike.dart';
 import 'package:onboarding_flow/ui/screens/Feedback.dart';
 import 'package:onboarding_flow/ui/screens/sign_in_screen.dart';
 import 'package:onboarding_flow/ui/screens/welcome_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Filters.dart';
+import 'BackgroundVideo.dart';
 
 class NewHome extends StatefulWidget {
 
@@ -33,12 +35,17 @@ class _NewHomeState extends State<NewHome> {
   @override
   void initState() {
     super.initState();
-
+    savebool().then((value) => null);
   }
   Future<String> getUID() async {
     final FirebaseUser u = await FirebaseAuth.instance.currentUser();
 
     return u.uid;
+  }
+  Future<String> savebool() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('seen', true);
+    return "true";
   }
 
 
@@ -95,7 +102,17 @@ class _NewHomeState extends State<NewHome> {
                 },
               ),
               ListTile(
-                title: Text('Feeback'),
+                title: Text('Video Tutorial'),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>
+                          BackgroundVideo())
+                  );
+                },
+              ),
+              ListTile(
+                title: Text('Feedback'),
                 onTap: () {
                   Navigator.push(
                       context,

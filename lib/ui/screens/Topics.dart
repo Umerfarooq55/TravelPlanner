@@ -12,6 +12,7 @@ import 'package:onboarding_flow/ui/pages/homepage.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:onboarding_flow/ui/screens/welcome_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:search_widget/search_widget.dart';
 import '../../data.dart';
@@ -72,7 +73,7 @@ class TopicsState extends State {
   bool searchcountryfirst = true;
   bool firsttimecities = true;
   String citysearch = "";
-
+  bool subtopicsfetch =false;
   List getCheckboxItems() {
     var tmpArray = [];
     var tmpArray2 = [];
@@ -103,6 +104,14 @@ class TopicsState extends State {
     print("Actual List" + tmpArray.toString());
     return tmpArray.toSet().toList();
     ;
+  }
+  Future<bool> _NaigateBack(){
+    Navigator.pop(context);
+    Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) =>
+            WelcomeScreen())
+    );
   }
 
   List getCheckednames() {
@@ -251,6 +260,7 @@ class TopicsState extends State {
 
   @override
   Widget build(BuildContext context) {
+
     Pages.length >= 0 ? Pages.clear() : null;
     Pages.add(PageBUtton(0, "Interests", 'assets/search-interests.png'));
     Pages.add(PageBUtton(2, "Distance", 'assets/search-distance.png'));
@@ -265,249 +275,268 @@ class TopicsState extends State {
       subtopicstrue = false;
     }
     print("ShowInter " + showeinter.toString());
-    return SingleChildScrollView(
-      child: Wrap(
-        children: <Widget>[
-          Container(
-            color: Color(0xffEEEEEE),
-            child: Column(
+    return WillPopScope(
+      onWillPop: _NaigateBack,
+      child: SingleChildScrollView(
+          child:  Wrap(
               children: <Widget>[
-                showtext
-                    ? Column(
-                  children: <Widget>[
-                    Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image(
-                          image: AssetImage("assets/headericon.png"),
-                          width: 50,
-                          height: 50,
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 50, right: 50, top: 8.0),
-                      child: Text(
-                        "Discover the perfect destinations according to your interests!",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.bold),
-                      ),
-                    )
-                  ],
-                )
-                    : Container(),
-                Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.start,
-                    children: Pages),
-                showeinter ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Column(
-                          children: <Widget>[
-                            const SizedBox(
-                              height: 16,
+                Container(
+                  color: Color(0xffEEEEEE),
+                  child: Column(
+                    mainAxisAlignment:MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      showtext
+                          ? Column(
+                        children: <Widget>[
+                          Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image(
+                                image: AssetImage("assets/headericon.png"),
+                                width: 50,
+                                height: 50,
+                              )),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 50, right: 50, top: 8.0),
+                            child: Text(
+                              "Discover the perfect destinations according to your interests!",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.bold),
                             ),
-                            FutureBuilder(
-                              future: searchinterest(),
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData) return Center(
-                                  child: SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      backgroundColor: Colors.amber,
-                                    ),
+                          )
+                        ],
+                      )
+                          : Container(),
+                      Topics(),
+                      Padding(
+                        padding: const EdgeInsets.only(left:24,top:18.0),
+                        child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.start,
+                            children: Pages),
+                      ),
+                      showeinter ?  Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(18.0),
+                            child: SingleChildScrollView(
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              child: Column(
+                                children: <Widget>[
+                                  const SizedBox(
+                                    height: 16,
                                   ),
-                                );
+                                  FutureBuilder(
+                                    future: searchinterest(),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) return Center(
+                                        child: SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            backgroundColor: Colors.amber,
+                                          ),
+                                        ),
+                                      );
 
 
-                                return SearchWidget<String>(
-                                  dataList: interList.getRange(0, 111).toSet().toList(),
-                                  hideSearchBoxWhenItemSelected: false,
-                                  listContainerHeight: MediaQuery
-                                      .of(context)
-                                      .size
-                                      .height / 4,
-                                  queryBuilder: (query, list) {
-                                    return list
-                                        .where((item) =>
-                                        item
-                                            .toLowerCase()
-                                            .startsWith(query.toLowerCase()))
-                                        .toList();
-                                  },
-                                  popupListItemBuilder: (item) {
-                                    String result;
-                                    if(item.contains("?")){
-                                       result = item.substring(0, item.indexOf('?'));
-                                    }else{
-                                      result=item;
-                                    }
+                                      return SearchWidget<String>(
+                                        dataList: interList.getRange(0, 111).toSet().toList(),
+                                        hideSearchBoxWhenItemSelected: false,
+                                        listContainerHeight: MediaQuery
+                                            .of(context)
+                                            .size
+                                            .height / 4,
+                                        queryBuilder: (query, list) {
+                                          return list
+                                              .where((item) =>
+                                              item
+                                                  .toLowerCase()
+                                                  .startsWith(query.toLowerCase()))
+                                              .toList();
+                                        },
+                                        popupListItemBuilder: (item) {
+                                          String result;
+                                          if(item.contains("?")){
+                                            result = item.substring(0, item.indexOf('?'));
+                                          }else{
+                                            result=item;
+                                          }
 
-                                    return PopupListItemWidget(result);
-                                  },
-                                  selectedItemBuilder: (selectedItem,
-                                      deleteSelectedItem) {
+                                          return PopupListItemWidget(result);
+                                        },
+                                        selectedItemBuilder: (selectedItem,
+                                            deleteSelectedItem) {
 //                  return SelectedItemWidget(selectedItem, deleteSelectedItem);
-                                  },
-                                  // widget customization
-                                  noItemsFoundWidget: NoItemsFound(),
-                                  textFieldBuilder: (controller, focusNode) {
-                                    return MyTextField(controller, focusNode,
-                                        "Type a interest...");
-                                  },
-                                  onItemSelected: (item) {
+                                        },
+                                        // widget customization
+                                        noItemsFoundWidget: NoItemsFound(),
+                                        textFieldBuilder: (controller, focusNode) {
+                                          return MyTextField(controller, focusNode,
+                                              "Type a interest...");
+                                        },
+                                        onItemSelected: (item) {
 
 
-                                    var index = item.substring(item.length - 1,item.length);
-                                    int indexint=int.parse(index);
-                                    print("index final "+indexint.toString());
+                                          var index = item.substring(item.length - 1,item.length);
+                                          int indexint=int.parse(index);
+                                          print("index final "+indexint.toString());
 
-                                    Fluttertoast.showToast(
-                                        msg: "Destinations Updated",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor: Colors.green,
-                                        textColor: Colors.white,
-                                        fontSize: 16.0
-                                    );
-                                    _sendanalyticsSubtopics(item);
-                                    setState(() {
-                                      print("indexint"+ indexint.toString());
-                                      showSubtopics=true;
+                                          Fluttertoast.showToast(
+                                              msg: "Destinations Updated",
+                                              toastLength: Toast.LENGTH_SHORT,
+                                              gravity: ToastGravity.BOTTOM,
+                                              timeInSecForIosWeb: 1,
+                                              backgroundColor: Colors.green,
+                                              textColor: Colors.white,
+                                              fontSize: 16.0
+                                          );
+                                          _sendanalyticsSubtopics(item);
+                                          setState(() {
+                                            print("indexint"+ indexint.toString());
+                                            showSubtopics=false;
 
-                                      if(indexint==0){
-                                        CurrentTitle = "Culture";
-                                        CurrentTopic = "assets/topic_one.png";
-                                      }
-                                      if(indexint==1){
-                                        CurrentTitle = "Fun / kids";
-                                        CurrentTopic = "assets/topic_two.png";
-                                      }
-                                      if(indexint==2){
-                                        CurrentTitle = "Nature";
-                                        CurrentTopic = "assets/topic_three.png";
-                                      }
-                                      if(indexint==3){
-                                        CurrentTitle = "Nightlife";
-                                        CurrentTopic = "assets/topic_four.png";
-                                      }
-                                      if(indexint==4){
-                                        CurrentTitle = "Sport";
-                                        CurrentTopic = "assets/topic_fie.png";
-                                      }
-                                      if(indexint==5){
-                                        CurrentTitle = "Wellness";
-                                        CurrentTopic = "assets/topic_six.png";
-                                      }
+                                            if(indexint==0){
+                                              CurrentTitle = "Culture";
+                                              CurrentTopic = "assets/topic_one.png";
+                                            }
+                                            if(indexint==1){
+                                              CurrentTitle = "Fun / kids";
+                                              CurrentTopic = "assets/topic_two.png";
+                                            }
+                                            if(indexint==2){
+                                              CurrentTitle = "Nature";
+                                              CurrentTopic = "assets/topic_three.png";
+                                            }
+                                            if(indexint==3){
+                                              CurrentTitle = "Nightlife";
+                                              CurrentTopic = "assets/topic_four.png";
+                                            }
+                                            if(indexint==4){
+                                              CurrentTitle = "Sport";
+                                              CurrentTopic = "assets/topic_fie.png";
+                                            }
+                                            if(indexint==5){
+                                              CurrentTitle = "Wellness";
+                                              CurrentTopic = "assets/topic_six.png";
+                                            }
+                                            if (getselectedheader().length >6) {
+                                              Scaffold.of(context).showSnackBar(new SnackBar(
+                                                content: new Text(
+                                                    "you reached the max number of filters. remove some filters to add new ones"),
+                                              ));
+                                            }else {
+                                              firsttime = true;
+                                              Future.delayed(const Duration(milliseconds: 2000), () {
+                                                String result;
+                                                if(item.contains("?")) {
+                                                  result    = item.substring(
+                                                      0, item.indexOf('?'));
+                                                }else{
+                                                  result=item;
+                                                }
+                                                setState(() {
+                                                  subtopicstrue = true;
 
-                                      firsttime = true;
-                                      Future.delayed(const Duration(milliseconds: 2000), () {
-                                        String result;
-                                        if(item.contains("?")) {
-                                          result    = item.substring(
-                                              0, item.indexOf('?'));
-                                        }else{
-                                          result=item;
-                                        }
-                                        setState(() {
-                                          subtopicstrue = true;
-                                          subtopicsList[indexint].contents[result]['alue'] =
-                                      true;
-                                        });
-                                      });
+                                                  subtopicsList[indexint].contents[result]['alue'] =
+                                                  true;
+                                                });
+                                              });
+                                            }
 
-                                    });
-                                    _sendanalyticsSubtopics(item);
-                                  },
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Wrap(
-                      children: <Widget>[
-                        Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.start,
-                            children: distanceList),
-                        Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.start,
-                            children: countryList)
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 34, right: 10, top: 18.0),
-                              child: Text(
-                                "SELECT YOUR INTERESTS:".toUpperCase(),
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 15, fontWeight: FontWeight.bold),
+
+                                          });
+                                          _sendanalyticsSubtopics(item);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
-                            Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.start,
-                                children: header),
-                            showSubtopics ? UnSelect() : Select(),
-                          ],
-                        ),
+                          ),
+                          Wrap(
+                            children: <Widget>[
+                              Wrap(
+                                  crossAxisAlignment: WrapCrossAlignment.start,
+                                  children: distanceList),
+                              Wrap(
+                                  crossAxisAlignment: WrapCrossAlignment.start,
+                                  children: countryList)
+                            ],
+                          ),
+
+                        ],
+                      ):
 //                    Padding(
-//                      padding: const EdgeInsets.only(top: 12.0),
-//                      child: Center(
-//                        child: NiceButton(
-//                          elevation: 10,
-//                          radius: 15,
-//                          width: 150,
-//                          fontSize: 15,
-//                          padding: const EdgeInsets.all(15),
-//                          text: showworld ? "All the World" : "All the World",
-//                          gradientColors: [secondColor, firstColor],
-//                          onPressed: () {
-//                            setState(() {
-//                              if (showworld) {
-//                                showworld = false;
-//                              } else {
-//                                showworld = true;
-//                              }
-//                            });
-//                          },
-//                        ),
-//                      ),
-//                    ),
-                      ],
-                    )
-                  ],
-                ) : Container(),
-                showworld ? WorlSearch() : Container()
+//                      padding: const EdgeInsets.only(top:18.0),
+//                      child: Text("Select Topic from above first",
+//                        style: TextStyle(
+//                            fontSize: 15, fontWeight: FontWeight.bold)),
+//                    )
+                          Container(),
+                      header.length>0?   Padding(
+                        padding: const EdgeInsets.only(
+                            left: 34, right: 10, top: 8.0),
+                        child: Text(
+                          "YOUR INTERESTS:".toUpperCase(),
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                      ):Container(),
+                      showeinter ?      Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.start,
+                          children: header):Container(),
+                      showworld ? WorlSearch() : Container()
+                    ],
+                  ),
+                ),
+                HomePageWithoutAppbar(
+                    listids,
+                    listnames,
+                    searchname,
+                    searchtrue,
+                    distancetrue,
+                    subtopicstrue,
+                    _lowerValue),
               ],
-            ),
-          ),
-          HomePageWithoutAppbar(
-              listids,
-              listnames,
-              searchname,
-              searchtrue,
-              distancetrue,
-              subtopicstrue,
-              _lowerValue),
-        ],
+            )
+
+
+
       ),
     );
+  }
+
+  @override
+  void initState() {
+    Fetchsubtopics().then((value) {
+
+    }
+
+    );
+  }
+
+  Column Topics() {
+    return Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+
+                              showSubtopics ? UnSelect() : Select(),
+                            ],
+                          ),
+//
+                        ],
+                      );
   }
 
   Padding WorlSearch() {
@@ -593,13 +622,17 @@ class TopicsState extends State {
                                 );
                                 _sendAnalyticsFilter();
                                 print("Umer selected");
-                                _selectedItem = item;
-                                searchtrue = true;
-                                showtext = false;
-                                searchname.add(
-                                    _selectedItem.replaceAll(" ", "+"));
-                                countryList.add(selectedtopic(
-                                    countryList.length, _selectedItem));
+                                setState(() {
+                                  _selectedItem = item;
+                                  searchtrue = true;
+                                  showtext = false;
+                                  searchname.add(
+                                      _selectedItem.replaceAll(" ", "+"));
+                                  countryList.add(selectedtopic(
+                                      countryList.length, _selectedItem));
+
+                                });
+
                               }
                             });
                           },
@@ -625,10 +658,10 @@ class TopicsState extends State {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(
-                        left: 34, right: 10, top: 18.0),
+                        left: 0, right: 10, top: 18.0),
                     child: Text(
                       "YOUR INTERESTS:".toUpperCase(),
-                      textAlign: TextAlign.center,
+                      textAlign: TextAlign.start,
                       style: TextStyle(
                           fontSize: 15, fontWeight: FontWeight.bold),
                     ),
@@ -680,7 +713,28 @@ class TopicsState extends State {
 //                  return SelectedItemWidget(selectedItem, deleteSelectedItem);
                           },
                           // widget customization
-                          noItemsFoundWidget: Container(),
+                          noItemsFoundWidget: Center(
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text("Click on search to show results"),
+                       new Icon(
+                        Icons.search,
+                        size: 20,
+                        color: Colors.black,
+                        ),
+
+                                  ],),
+                              ),
+                          ),
+//                          noItemsFoundWidget: SizedBox(
+//                            height: 20,
+//                              width: 20,
+//                              child: CircularProgressIndicator(
+// backgroundColor: Colors.amber,
+//                              )),
                           textFieldBuilder: (controller, focusNode) {
                             controller.addListener(() {
                               if (controller.text.length > 2) {
@@ -784,7 +838,7 @@ class TopicsState extends State {
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Center(child: Text(
-                      "0 Km                                            2000 Km",
+                      "0 Km                                            800 Km",
                       style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold
@@ -794,8 +848,8 @@ class TopicsState extends State {
                     margin: EdgeInsets.only(top: 0, left: 50, right: 50),
                     alignment: Alignment.centerLeft,
                     child: FlutterSlider(
-                      values: [200],
-                      max: 2000,
+                      values: [0],
+                      max: 800,
                       min: 0,
                       rtl: false,
                       visibleTouchArea: false,
@@ -1053,25 +1107,34 @@ class TopicsState extends State {
                             activeColor: Colors.pink,
                             checkColor: Colors.white,
                             onChanged: (bool value) {
-                              Fluttertoast.showToast(
-                                  msg: "Destinations Updated",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: Colors.green,
-                                  textColor: Colors.white,
-                                  fontSize: 16.0
-                              );
-                              _sendanalyticsSubtopics(key);
-                              setState(() {
-                                subtopicstrue = true;
-                                showtext = false;
-                                subtopicsList[i].contents[key]['alue'] =
-                                    value;
-                                firsttime = false;
+          if (getselectedheader().length >6) {
+                            Scaffold.of(context).showSnackBar(new SnackBar(
+                              content: new Text(
+                                  "you reached the max number of filters. remove some filters to add new ones"),
+                            ));
+                        }else{
+            Fluttertoast.showToast(
+                msg: "Destinations Updated",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.green,
+                textColor: Colors.white,
+                fontSize: 16.0
+            );
+            _sendanalyticsSubtopics(key);
+            setState(() {
+              subtopicstrue = true;
+              showSubtopics=false;
+              showtext = false;
+              subtopicsList[i].contents[key]['alue'] =
+                  value;
+              firsttime = false;
 //                              showtext = false;
-                              });
-                              _sendanalyticsSubtopics(key);
+            });
+            _sendanalyticsSubtopics(key);
+          }
+
                             },
                           );
                         }).toList()
@@ -1235,7 +1298,13 @@ class TopicsState extends State {
           });
           print("citylist " + citylist.length.toString());
           searchcountryfirst = false;
+
+
+
+
+
         });
+        subtopicsfetch=true;
         return subtopicsList;
       } else {
         // If the server did not return a 200 OK response,
@@ -1337,7 +1406,7 @@ class TopicsState extends State {
                           ),
                           semanticContainer: true,
                           clipBehavior: Clip.antiAliasWithSaveLayer,
-                          elevation: 5,
+                          elevation: 1,
                           child: Image(
                             fit: BoxFit.fill,
                             image: AssetImage("assets/topic_one.png"),
@@ -1364,7 +1433,7 @@ class TopicsState extends State {
                           ),
                           semanticContainer: true,
                           clipBehavior: Clip.antiAliasWithSaveLayer,
-                          elevation: 5,
+                          elevation: 1,
                           child: Image(
                             fit: BoxFit.fill,
                             image: AssetImage("assets/topic_two.png"),
@@ -1391,7 +1460,7 @@ class TopicsState extends State {
                           ),
                           semanticContainer: true,
                           clipBehavior: Clip.antiAliasWithSaveLayer,
-                          elevation: 5,
+                          elevation: 1,
                           child: Image(
                             fit: BoxFit.fill,
                             image: AssetImage("assets/topic_three.png"),
@@ -1429,7 +1498,7 @@ class TopicsState extends State {
                           ),
                           semanticContainer: true,
                           clipBehavior: Clip.antiAliasWithSaveLayer,
-                          elevation: 5,
+                          elevation: 1,
                           child: Image(
                             fit: BoxFit.fill,
                             image: AssetImage("assets/topic_four.png"),
@@ -1456,7 +1525,7 @@ class TopicsState extends State {
                           ),
                           semanticContainer: true,
                           clipBehavior: Clip.antiAliasWithSaveLayer,
-                          elevation: 5,
+                          elevation: 1,
                           child: Image(
                             fit: BoxFit.fill,
                             image: AssetImage("assets/topic_fie.png"),
@@ -1483,7 +1552,7 @@ class TopicsState extends State {
                           ),
                           semanticContainer: true,
                           clipBehavior: Clip.antiAliasWithSaveLayer,
-                          elevation: 5,
+                          elevation: 1,
                           child: Image(
                             fit: BoxFit.fill,
                             image: AssetImage("assets/topic_six.png"),
@@ -1516,7 +1585,7 @@ class TopicsState extends State {
         elevation: 20,
         child: Container(
           height: 35,
-          width: name.length <= 6 ? 95 : name.length <= 9 ? 120 : 190,
+          width: name.length <= 6 ? 100 : name.length <= 9 ? 120 : 190,
           decoration: new BoxDecoration(
               color: Colors.grey,
               shape: BoxShape.rectangle,
@@ -1593,7 +1662,7 @@ class TopicsState extends State {
                       ),
                       semanticContainer: true,
                       clipBehavior: Clip.antiAliasWithSaveLayer,
-                      elevation: 5,
+                      elevation: 1,
                       child: Image(
                         fit: BoxFit.fill,
                         image: AssetImage("assets/topic_one.png"),
@@ -1620,7 +1689,7 @@ class TopicsState extends State {
                       ),
                       semanticContainer: true,
                       clipBehavior: Clip.antiAliasWithSaveLayer,
-                      elevation: 5,
+                      elevation: 1,
                       child: Image(
                         fit: BoxFit.fill,
                         image: AssetImage("assets/topic_two.png"),
@@ -1647,7 +1716,7 @@ class TopicsState extends State {
                       ),
                       semanticContainer: true,
                       clipBehavior: Clip.antiAliasWithSaveLayer,
-                      elevation: 5,
+                      elevation: 1,
                       child: Image(
                         fit: BoxFit.fill,
                         image: AssetImage("assets/topic_three.png"),

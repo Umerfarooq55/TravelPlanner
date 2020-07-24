@@ -18,6 +18,7 @@ import 'package:smartlook/smartlook.dart';
 
 import 'package:launch_review/launch_review.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:video_player/video_player.dart';
 Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) {
   if (message.containsKey('data')) {
     // Handle data message
@@ -41,6 +42,47 @@ void main() {
 
 }
 
+
+class LoginWidget extends StatelessWidget {
+  const LoginWidget({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: <Widget>[
+        Container(),
+        Container(
+          padding: EdgeInsets.all(16),
+          width: 300,
+          height: 200,
+          color: Colors.grey.withAlpha(200),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              TextField(
+                decoration: InputDecoration(
+                  hintText: 'Username',
+                ),
+              ),
+              TextField(
+                decoration: InputDecoration(
+                  hintText: 'Password',
+                ),
+              ),
+              RaisedButton(
+                child: Text('Login'),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
 class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }

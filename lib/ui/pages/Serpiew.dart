@@ -97,7 +97,7 @@ class HomeState extends State<HomeDetailsserp> {
     clipBehavior: Clip.antiAliasWithSaveLayer,
     elevation: 20,
             child: new WebviewScaffold(
-              url:"https://www.google.com/search?q="+widget.place+"+near+"+widget.city+widget.url,
+              url:"https://www.google.com/search?q="+widget.place+"+near+"+widget.city+ " "+widget.places['country']['name']+widget.url,
 //      url: "https://www.google.com/maps/search/?api=1&query="+widget.longdouble.toString()+","+widget.latdouble.toString(),
               appBar: new AppBar(
                 actions: <Widget>[
