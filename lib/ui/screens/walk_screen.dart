@@ -73,11 +73,11 @@ class _WalkthroughScreenState extends State<WalkthroughScreen> {
   List<Widget> _getPages(BuildContext context) {
     List<Widget> widgets = [];
     List<String> pics=[];
-    pics.add("assets/travel_three.png");
-
-    pics.add("assets/travel_two.png");
     pics.add("assets/travel_one.png");
 
+    pics.add("assets/travel_two.png");
+
+    pics.add("assets/travel_three.png");
     for (int i = 0; i < 3; i++) {
       Walkthrough page = widget.pages[i];
       widgets.add(
