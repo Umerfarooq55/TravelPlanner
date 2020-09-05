@@ -14,6 +14,7 @@ import 'package:nice_button/NiceButton.dart';
 import 'package:onboarding_flow/ui/screens/welcome_screen.dart';
 
 import 'BackgroundVideo.dart';
+import 'NewHome.dart';
 class beforeVideo extends StatefulWidget {
   @override
   _beforeVideoState createState() => _beforeVideoState();
@@ -48,12 +49,11 @@ class _beforeVideoState extends State<beforeVideo> {
 
   @override
   void initState() {
-    Future.delayed(const Duration(milliseconds: 2000), () {
-      Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) =>
-              BackgroundVideo())
-      );
-    });
+    Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) =>
+            NewHome(false))
+    );
+
   }
 }

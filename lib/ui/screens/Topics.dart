@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:android_intent/android_intent.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
@@ -11,6 +12,7 @@ import 'package:onboarding_flow/ui/pages/HomePageWithoutAppBar.dart';
 import 'package:onboarding_flow/ui/pages/homepage.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui' as ui;
 import 'package:http/http.dart' as http;
 import 'package:onboarding_flow/ui/screens/welcome_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -18,11 +20,17 @@ import 'package:search_widget/search_widget.dart';
 import '../../data.dart';
 
 class Topics extends StatefulWidget {
+  bool showlogou;
+  Topics(bool showlogout){
+
+    this.showlogou=showlogout;
+  }
+
   @override
   TopicsState createState() => new TopicsState();
 }
 
-class TopicsState extends State {
+class TopicsState extends State<Topics> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   Map<String, bool> values = {
     'Apple': false,
@@ -41,10 +49,12 @@ class TopicsState extends State {
   bool showdistance = false;
   bool showcountery = false;
   bool showcity = false;
+  bool showcontinet = false;
   List<Widget> header;
   bool searchtrue = false;
   bool distancetrue = false;
   bool subtopicstrue = false;
+  bool continenttrue = false;
   bool showworld = true;
   List<Data> subtopicsList = new List();
   bool firsttime = true;
@@ -60,11 +70,15 @@ class TopicsState extends State {
   String CurrentTopic = "assets/topic_one.png";
   String CurrentTitle = "";
   List searchname = [];
+  List Con = [];
+  var Lang="en";
   List<String> clist = [];
+  List<String> Continet = [];
   List<String> interList = [];
   List<String> citylist = [];
   String _selectedItem;
   List<Widget> Pages = [];
+  List<Widget> Pages_two = [];
   bool _show = true;
   List<Widget> distanceList = [];
   int counterDisaple = 0;
@@ -74,6 +88,8 @@ class TopicsState extends State {
   bool firsttimecities = true;
   String citysearch = "";
   bool subtopicsfetch =false;
+  bool log;
+
   List getCheckboxItems() {
     var tmpArray = [];
     var tmpArray2 = [];
@@ -102,16 +118,28 @@ class TopicsState extends State {
       });
     }
     print("Actual List" + tmpArray.toString());
+
     return tmpArray.toSet().toList();
     ;
   }
   Future<bool> _NaigateBack(){
-    Navigator.pop(context);
-    Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) =>
-            WelcomeScreen())
-    );
+    FirebaseAuth.instance.currentUser().then((value) {
+      if(value != null){
+
+      }else{
+
+        Navigator.pop(context);
+        Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) =>
+                WelcomeScreen())
+        );
+      }
+    });
+
+
+
+
   }
 
   List getCheckednames() {
@@ -189,6 +217,7 @@ class TopicsState extends State {
               showdistance = false;
               showcountery = false;
               showcity = false;
+              showcontinet=false;
             }
             if (index == 1) {
               currentIndex = 3;
@@ -197,6 +226,7 @@ class TopicsState extends State {
               showcountery = true;
               showcity = false;
               showworld = true;
+              showcontinet=false;
             }
             if (index == 2) {
               currentIndex = 2;
@@ -205,6 +235,7 @@ class TopicsState extends State {
               showcountery = false;
               showcity = false;
               showworld = true;
+              showcontinet=false;
             }
             if (index == 3) {
               currentIndex = 1;
@@ -213,6 +244,16 @@ class TopicsState extends State {
               showcountery = false;
               showcity = true;
               showworld = true;
+              showcontinet=false;
+            }
+            if (index == 4) {
+              currentIndex = 4;
+              showeinter = false;
+              showdistance = false;
+              showcountery = false;
+              showcity = false;
+              showworld = true;
+              showcontinet=true;
             }
             print("index 5 " + index.toString());
             print("index 5 " + currentIndex.toString());
@@ -263,13 +304,21 @@ class TopicsState extends State {
 
     Pages.length >= 0 ? Pages.clear() : null;
     Pages.add(PageBUtton(0, "Interests", 'assets/search-interests.png'));
-    Pages.add(PageBUtton(2, "Distance", 'assets/search-distance.png'));
-    Pages.add(PageBUtton(3, "Nation", 'assets/search-nation.png'));
-    Pages.add(PageBUtton(1, "City", 'assets/search-city.png'));
+    Pages.add(PageBUtton(4, "Continent", 'assets/search-con.png'));
+    Pages.add(PageBUtton(3, "Country", 'assets/search-nation.png'));
+//    Pages.add(PageBUtton(2, "Distance", 'assets/search-distance.png'));
+//    Pages.add(PageBUtton(1, "City", 'assets/search-city.png'));
+    Pages_two.length >= 0 ? Pages_two.clear() : null;
+//    Pages.add(PageBUtton(0, "Interests", 'assets/search-interests.png'));
+//    Pages.add(PageBUtton(4, "Continent", 'assets/search-con.png'));
+//    Pages.add(PageBUtton(3, "Country", 'assets/search-nation.png'));
+    Pages_two.add(PageBUtton(2, "Distance", 'assets/search-distance.png'));
+    Pages_two.add(PageBUtton(1, "City", 'assets/search-city.png'));
     header = [];
     List listids = getCheckboxItems();
     List listnames = getCheckboxnames();
-    print("List IDs" + searchtrue.toString());
+    print("Pages Lenthgh" + Pages.length.toString());
+    print("Pages Lenthgh two" + Pages_two.length.toString());
     header = getselectedheader();
     if (header.length < 1) {
       subtopicstrue = false;
@@ -281,7 +330,7 @@ class TopicsState extends State {
           child:  Wrap(
               children: <Widget>[
                 Container(
-                  color: Color(0xffEEEEEE),
+                  color: Color(0xfffffff),
                   child: Column(
                     mainAxisAlignment:MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,11 +359,23 @@ class TopicsState extends State {
                       )
                           : Container(),
                       Topics(),
+
                       Padding(
                         padding: const EdgeInsets.only(left:24,top:18.0),
                         child: Wrap(
+
+                          spacing: 35,
                             crossAxisAlignment: WrapCrossAlignment.start,
                             children: Pages),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left:95,top:18.0),
+                        child: Wrap(
+
+                            spacing: 20,
+                          alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: Pages_two),
                       ),
                       showeinter ?  Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -478,16 +539,16 @@ class TopicsState extends State {
 //                            fontSize: 15, fontWeight: FontWeight.bold)),
 //                    )
                           Container(),
-                      header.length>0?   Padding(
-                        padding: const EdgeInsets.only(
-                            left: 34, right: 10, top: 8.0),
-                        child: Text(
-                          "YOUR INTERESTS:".toUpperCase(),
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
-                        ),
-                      ):Container(),
+//                      header.length>0?   Padding(
+//                        padding: const EdgeInsets.only(
+//                            left: 34, right: 10, top: 8.0),
+//                        child: Text(
+//                          "YOUR INTERESTS::".toUpperCase(),
+//                          textAlign: TextAlign.start,
+//                          style: TextStyle(
+//                              fontSize: 15, fontWeight: FontWeight.bold),
+//                        ),
+//                      ):Container(),
                       showeinter ?      Wrap(
                           crossAxisAlignment: WrapCrossAlignment.start,
                           children: header):Container(),
@@ -499,10 +560,13 @@ class TopicsState extends State {
                     listids,
                     listnames,
                     searchname,
+                    Con,
                     searchtrue,
                     distancetrue,
                     subtopicstrue,
-                    _lowerValue),
+                    continenttrue,
+                    _lowerValue,
+                widget.showlogou),
               ],
             )
 
@@ -514,6 +578,16 @@ class TopicsState extends State {
 
   @override
   void initState() {
+
+
+    var arr = ['it','es','fr','de','zh','it','ru','ja','en'];
+    print( "TimeZone " +ui.window.locale.languageCode);
+    if(arr.contains(ui.window.locale.languageCode)){
+      Lang = ui.window.locale.languageCode;
+    }else{
+      Lang = "en";
+    }
+
     Fetchsubtopics().then((value) {
 
     }
@@ -545,6 +619,16 @@ class TopicsState extends State {
     print("WorlSearch showcountery " + showcountery.toString());
     print("WorlSearch showcity " + showcity.toString());
     print(" WorlSearch showworld " + showworld.toString());
+    print(" WorlSearch showcontinet " + showcontinet.toString());
+
+    Continet.add("Africa");
+    Continet.add("Asia");
+    Continet.add("Antarctica");
+    Continet.add("Europe");
+    Continet.add("North america");
+    Continet.add("Oceania");
+    Continet.add("South America");
+
     return Padding(
       padding: const EdgeInsets.all(18.0),
       child: Column(
@@ -622,12 +706,15 @@ class TopicsState extends State {
                                 );
                                 _sendAnalyticsFilter();
                                 print("Umer selected");
+
+
+
                                 setState(() {
-                                  _selectedItem = item;
+_selectedItem=item;
                                   searchtrue = true;
                                   showtext = false;
                                   searchname.add(
-                                      _selectedItem.replaceAll(" ", "+"));
+                                      _selectedItem);
                                   countryList.add(selectedtopic(
                                       countryList.length, _selectedItem));
 
@@ -774,7 +861,7 @@ class TopicsState extends State {
                                    context,
                                    MaterialPageRoute(builder: (context) =>
                                        DetailPage(l1, l2,
-                                           places, true))
+                                           places, true,widget.showlogou))
 
                                );
                              }else{
@@ -828,7 +915,156 @@ class TopicsState extends State {
               ) : Container(),
             ],
           ) : Container(),
+          showcontinet ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Column(
+                  children: <Widget>[
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    SearchWidget<String>(
+                      dataList: Continet.toSet().toList(),
+                      hideSearchBoxWhenItemSelected: false,
+                         listContainerHeight: MediaQuery
+        .of(context)
+        .size
+        .height / 4,
+                      queryBuilder: (query, list) {
+                        return list
+                            .where((item) =>
+                            item
+                                .toLowerCase()
+                                .startsWith(query.toLowerCase()))
+                            .toList();
+                      },
+                      popupListItemBuilder: (item) {
+                        return PopupListItemWidget(item);
+                      },
+                      selectedItemBuilder: (selectedItem,
+                          deleteSelectedItem) {
+//                  return SelectedItemWidget(selectedItem, deleteSelectedItem);
+                      },
+                      // widget customization
+                      noItemsFoundWidget: Center(
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text("Click on search to show results"),
+                              new Icon(
+                                Icons.search,
+                                size: 20,
+                                color: Colors.black,
+                              ),
 
+                            ],),
+                        ),
+                      ),
+//                          noItemsFoundWidget: SizedBox(
+//                            height: 20,
+//                              width: 20,
+//                              child: CircularProgressIndicator(
+// backgroundColor: Colors.amber,
+//                              )),
+                      textFieldBuilder: (controller, focusNode) {
+
+                        return MyTextField(
+                            controller, focusNode, "Select continent");
+                      },
+                      onItemSelected: (item) {
+                        setState(() {
+                          if (searchname.length >= 6) {
+                            Scaffold.of(context).showSnackBar(new SnackBar(
+                              content: new Text(
+                                  "you reached the max number of filters. remove some filters to add new ones"),
+                            ));
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: "Destinations Updated",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.green,
+                                textColor: Colors.white,
+                                fontSize: 16.0
+                            );
+                            _sendAnalyticsFilter();
+                            print("Umer selected");
+                            if(item=="Africa"){
+                              _selectedItem="AF";
+                            }
+                            if(item=="Asia"){
+                              _selectedItem="AS";
+                            }
+                            if(item=="Antarctica"){
+                              _selectedItem="AN";
+                            }
+                            if(item=="Europe"){
+                              _selectedItem="EU";
+                            }
+                            if(item=="North america"){
+                              _selectedItem="NA";
+                            }
+                            if(item=="Oceania"){
+                              _selectedItem="OC";
+                            }
+                            if(item=="South America"){
+                              _selectedItem="SA";
+                            }
+                            setState(() {
+
+                              continenttrue = true;
+                              showtext = false;
+                              Con.add(
+                                  _selectedItem);
+                              countryList.add(selectedtopic(
+                                  countryList.length, item));
+
+                            });
+
+                          }
+                        });
+                      },
+                    )
+                  ],
+                ),
+              ),
+              Wrap(
+                children: <Widget>[
+                  Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      children: distanceList),
+                  Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      children: countryList)
+                ],
+              ),
+              header.length > 0 ? Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 34, right: 10, top: 18.0),
+                    child: Text(
+                      "YOUR INTERESTS:".toUpperCase(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      children: header),
+                ],
+              ) : Container(),
+            ],
+          ) : Container(),
           showdistance ? Wrap(
             children: <Widget>[
               Column(
@@ -1014,7 +1250,7 @@ class TopicsState extends State {
 
     var obj = new Map<dynamic, dynamic>();
     var Mainmap = new Map<String, dynamic>();
-    String url = "http://gscrape.xeeve.com/api/searchcity?input=" +
+    String url = "http://gscrape.xeeve.com/api/searchcity?lang="+Lang+"&input=" +
         value;
 //    String url =   "http://gscrape.xeeve.com/api/searchgroup?topicid[]=2&topicid[]=3&lang=en_US";
     final response = await http.get(url);
@@ -1152,7 +1388,7 @@ class TopicsState extends State {
 
   Future<List<Data>> searchinterest() async {
     if (firsttimeinterest) {
-      String url = 'https://gscrape.xeeve.com/api/config?lang=en_US';
+      String url = 'https://gscrape.xeeve.com/api/config?lang='+Lang;
 //    String url =   "http://gscrape.xeeve.com/api/searchgroup?topicid[]=2&topicid[]=3&lang=en_US";
       final response = await http.get(url);
       print("URL : " + url);
@@ -1192,7 +1428,7 @@ class TopicsState extends State {
     if (firsttime) {
       var obj = new Map<dynamic, dynamic>();
       var Mainmap = new Map<String, dynamic>();
-      String url = 'https://gscrape.xeeve.com/api/config?lang=en_US';
+      String url = 'https://gscrape.xeeve.com/api/config?lang='+Lang;
 //    String url =   "http://gscrape.xeeve.com/api/searchgroup?topicid[]=2&topicid[]=3&lang=en_US";
       final response = await http.get(url);
       print("URL : " + url);
@@ -1239,8 +1475,8 @@ class TopicsState extends State {
     if (firsttimecities) {
       var obj = new Map<dynamic, dynamic>();
       var Mainmap = new Map<String, dynamic>();
-      String url = "http://gscrape.xeeve.com/api/searchcity?input=" +
-          citysearch;
+      String url = "http://gscrape.xeeve.com/api/searchcity?lang="+Lang+"&input=" +
+      citysearch;
 //    String url =   "http://gscrape.xeeve.com/api/searchgroup?topicid[]=2&topicid[]=3&lang=en_US";
       final response = await http.get(url);
       print("URL : " + url);
@@ -1267,7 +1503,7 @@ class TopicsState extends State {
 
 
       });
-      print("city habiba"+clist[0]);
+      print("city h"+clist[0]);
       firsttimecities = false;
       return subtopicsList;
       return json.decode(response.body);
@@ -1278,7 +1514,7 @@ class TopicsState extends State {
 
   Future<List<Data>> searchcountry() async {
     if (searchcountryfirst) {
-      String url = 'https://gscrape.xeeve.com/api/config?lang=en_US';
+      String url = 'https://gscrape.xeeve.com/api/config?lang='+Lang;
 //    String url =   "http://gscrape.xeeve.com/api/searchgroup?topicid[]=2&topicid[]=3&lang=en_US";
       final response = await http.get(url);
       print("URL : " + url);
@@ -1869,10 +2105,12 @@ class TopicsState extends State {
                           if (countryList.length <= 1) {
                             countryList.clear();
                             searchname.clear();
+                            Con.clear();
                             searchtrue = false;
                           } else {
                             countryList.removeAt(i);
                             searchname.removeAt(i);
+                            Con.clear();
                           }
                         });
                       }),

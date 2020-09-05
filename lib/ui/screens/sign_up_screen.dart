@@ -43,7 +43,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       errorColor: Colors.red,
       controller: _fullname,
       hint: "Full Name",
-      validator: Validator.validateName,
+//      validator: Validator.validateName,
     );
 //    _phoneField = new CustomTextField(
 //      baseColor: Colors.grey,

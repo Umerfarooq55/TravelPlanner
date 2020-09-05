@@ -52,11 +52,11 @@ class HomeState extends State<Playstore> {
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   Future<bool> _NaigateBack(){
     Navigator.pop(context);
-    Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) =>
-            DetailPage(widget.l1,widget.l2,widget.places,true))
-    );
+//    Navigator.push(
+//        context,
+//        MaterialPageRoute(builder: (context) =>
+//            DetailPage(widget.l1,widget.l2,widget.places,true,false))
+//    );
   }
 
   FirebaseAnalytics analytics = FirebaseAnalytics();
@@ -80,7 +80,7 @@ class HomeState extends State<Playstore> {
   }
   @override
   Widget build(BuildContext context) {
-
+print("FlightSURL "+ widget.url.toString());
     return WillPopScope(
       onWillPop:_NaigateBack ,
       child: Container(
@@ -97,7 +97,7 @@ class HomeState extends State<Playstore> {
             clipBehavior: Clip.antiAliasWithSaveLayer,
             elevation: 20,
             child: new WebviewScaffold(
-              url:"https://play.google.com/store/apps/details?id=trip.travelplanner.vacationholiday&hl=en",
+              url:widget.url,
 //      url: "https://www.google.com/maps/search/?api=1&query="+widget.longdouble.toString()+","+widget.latdouble.toString(),
               appBar: new AppBar(
                 actions: <Widget>[

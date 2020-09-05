@@ -13,12 +13,18 @@ import 'package:emoji_feedback/emoji_feedback.dart';
 import 'package:nice_button/NiceButton.dart';
 import 'package:onboarding_flow/ui/screens/welcome_screen.dart';
 
+import 'NewHome.dart';
+
 const kGoogleApiKey = "AIzaSyB_gPmsFE9D0vnEcR5m5lGlwzBMLRaQBmA";
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
 
 class UserFeedback extends StatefulWidget {
+  bool showlogout;
 
+  UserFeedback(bool showlogout){
+    this.showlogout= showlogout;
+  }
 
   @override
   State<StatefulWidget> createState() {
@@ -39,7 +45,11 @@ class HomeState extends State<UserFeedback> {
   TextEditingController feedback = TextEditingController();
 
   Future<bool> _NaigateBack() {
-    Navigator.pop(context);
+    Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) =>
+            NewHome(widget.showlogout))
+    );
   }
 
   @override

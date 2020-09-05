@@ -28,7 +28,6 @@ dependencies:
   http:
   firebase_analytics: ^5.0.11
   webview_flutter: ^0.3.19+9
-  flutter_webview_plugin: "0.3.0+2"
   nice_button: ^0.1.7
   package_info: ^0.4.0+16
   awesome_dialog: "0.1.3"
@@ -47,7 +46,10 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
-
+  geocoder: "0.2.1"
+  url_launcher: "5.5.0"
+  flutter_webview_plugin:
+    path: ../
 
 
 
@@ -102,6 +104,7 @@ flutter:
     - assets/search-nation.png
     - assets/search-distance.png
     - assets/search-interests.png
+    - assets/search-con.png
     - assets/teavel.png
     - assets/travel_one.png
     - assets/travel_two.png

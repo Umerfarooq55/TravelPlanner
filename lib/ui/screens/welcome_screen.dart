@@ -2,6 +2,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:onboarding_flow/ui/screens/Beforevideo.dart';
@@ -19,6 +20,8 @@ import 'package:onboarding_flow/ui/screens/BackgroundVideo.dart';
 
 
 class WelcomeScreen extends StatefulWidget {
+
+
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
@@ -48,7 +51,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 //                UserFeedback())
 //        );
 //      },
-      btnOkOnPress: () {},
+      btnOkOnPress: () {
+
+      },
 
     ).show();
   }
@@ -62,7 +67,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     Future.delayed(const Duration(milliseconds: 2000), () {
 
 // Here you can write your code
-dialog();
+//dialog();
     });
   }
 }
@@ -225,6 +230,7 @@ class Page extends StatelessWidget {
                         _sendAnalyticsEvent("").then((value) =>
                         LoadPref().then((value) {
                           bool seen = (value.getBool('seen') ?? false);
+
                           if(seen){
                             Navigator.push(
                                  context,
@@ -232,10 +238,12 @@ class Page extends StatelessWidget {
                                      NewHome(false))
                              );
                           }else{
+
+
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) =>
-                                    beforeVideo())
+                                    NewHome(false))
                             );
                           }
                         }

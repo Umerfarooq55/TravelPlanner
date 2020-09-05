@@ -10,8 +10,13 @@ import 'package:onboarding_flow/ui/model/CityDetail.dart';
 import 'package:http/http.dart' as http;
 import 'package:onboarding_flow/ui/pages/CityDetails.dart';
 
+import 'NewHome.dart';
+
 class UserLike extends StatefulWidget {
-  UserLike() {}
+  bool showlogout;
+  UserLike(bool showlogout) {
+     showlogout= showlogout;
+  }
 
   @override
   _UserLikeState createState() => _UserLikeState();
@@ -34,6 +39,7 @@ class _UserLikeState extends State<UserLike> {
           leading: new IconButton(
               icon: new Icon(Icons.arrow_back),
               onPressed: () => Navigator.pop(context)),
+
           title: new Text("Saved Trips",
               style: new TextStyle(
                   fontSize: 20.0,
@@ -129,7 +135,7 @@ class _UserLikeState extends State<UserLike> {
                                         list,
                                         list2,
                                        places,
-                                        false)));
+                                        false,widget.showlogout)));
                           },
                           child: Container(
                             color: Colors.white,
