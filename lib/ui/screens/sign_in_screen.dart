@@ -250,10 +250,15 @@ class _SignInScreenState extends State<SignInScreen> {
                     NewHome(true))
             );
           }else{
+//            Navigator.push(
+//                context,
+//                MaterialPageRoute(builder: (context) =>
+//                    beforeVideo())
+//            );
             Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) =>
-                    beforeVideo())
+                    NewHome(false))
             );
           }
             });
