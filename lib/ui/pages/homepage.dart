@@ -108,6 +108,7 @@ class _HomePageState extends State<HomePage> {
                 child: CircularProgressIndicator(),
               ),
             );
+
           return ListView.builder(
               itemCount: snapshot.data.places.length,
               padding: EdgeInsets.all(0.0),
@@ -125,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) =>
-                                DetailPage(widget.list,widget.list2,snapshot.data.places[i],true))
+                                DetailPage(widget.list,widget.list2,snapshot.data.places[i],true,false))
 
                         );
                       },

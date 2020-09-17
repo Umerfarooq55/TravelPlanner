@@ -22,14 +22,16 @@ class Viater extends StatefulWidget {
   List l1;
   List l2;
   Map<String, dynamic> places;
+  bool showlogout;
   String url;
-  Viater(List l1, List l2, Map<String, dynamic> places, double latdouble, String longdouble, String city, String s){
+  Viater(List l1, List l2, Map<String, dynamic> places, double latdouble, String longdouble, String city, String s, bool showlogout){
 
     this. latdouble=latdouble;
     this. place=longdouble;
     this .city =city;
     this.l1=l1;
     this.l2=l2;
+    this.showlogout=showlogout;
     this.places=places;
     this.url=s;
   }
@@ -55,7 +57,7 @@ class HomeState extends State<Viater> {
     Navigator.push(
         context,
         MaterialPageRoute(builder: (context) =>
-            DetailPage(widget.l1,widget.l2,widget.places,true))
+            DetailPage(widget.l1,widget.l2,widget.places,true,widget.showlogout))
     );
   }
 

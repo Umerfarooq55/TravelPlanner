@@ -13,35 +13,43 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:nice_button/NiceButton.dart';
+import 'package:onboarding_flow/main.dart';
 import 'package:onboarding_flow/ui/model/city.dart';
 import 'package:onboarding_flow/ui/model/CityModel.dart';
 import 'package:onboarding_flow/ui/model/CityDetail.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:onboarding_flow/ui/pages/Flights.dart';
 import 'package:onboarding_flow/ui/pages/playstore.dart';
 import 'package:onboarding_flow/ui/screens/Feedback.dart';
+import 'package:onboarding_flow/ui/screens/NewHome.dart';
 import 'package:onboarding_flow/ui/screens/UserLike.dart';
 import 'package:onboarding_flow/ui/screens/sign_in_screen.dart';
 import 'package:onboarding_flow/ui/screens/welcome_screen.dart';
+import 'MainTwo.dart';
 import 'Serpiew.dart';
 import 'Viater.dart';
 import 'main.dart';
+import 'dart:ui' as ui;
 
 class DetailPage extends StatefulWidget {
   List<dynamic> list;
   List<dynamic> list2;
   List<dynamic> tempids;
   List<dynamic> tempnames;
+
   Map<String, dynamic> places;
   bool shoeheart;
+  bool showlogout;
 
   DetailPage(List<dynamic> list, List<dynamic> list2,
-      Map<String, dynamic> places, bool str) {
+      Map<String, dynamic> places, bool str, bool showlogout) {
     this.list = list;
     this.list2 = list2;
     this.places = places;
     this.shoeheart = str;
+    this.showlogout=showlogout;
   }
 
   @override
@@ -56,7 +64,7 @@ class _HomePageState extends State<DetailPage> {
   String expandText = 'Read More';
   final LatLng _center = const LatLng(45.521563, -122.677433);
   GoogleMapController mapController;
-
+  var Lang ="en";
   bool information = true;
   bool thingstodo = false;
   bool flightScreen = false;
@@ -122,6 +130,14 @@ class _HomePageState extends State<DetailPage> {
 
   @override
   void initState() {
+
+    var arr = ['it','es','fr','de','zh','it','ru','ja','en'];
+    print( "TimeZone " +ui.window.locale.languageCode);
+    if(arr.contains(ui.window.locale.languageCode)){
+      Lang = ui.window.locale.languageCode;
+    }else{
+      Lang = "en";
+    }
     _sendAnalyticsEvent("");
   }
 
@@ -133,9 +149,12 @@ class _HomePageState extends State<DetailPage> {
     double latdouble = double.parse(lat);
     String id = widget.places["id"];
 
+    print("umer lat "+ lat.toString());
+    print("umer long "+ long);
 //    List imagesList= widget.places['images'];
     return new Scaffold(
         appBar: new AppBar(
+
           actions: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
@@ -179,24 +198,54 @@ class _HomePageState extends State<DetailPage> {
               information
                   ? Column(
                       children: <Widget>[
+                        SizedBox(
+                          height: 300,
+                          width: 500,
+                          //child: GestureDetector(
+                          child: GoogleMap(
+                            rotateGesturesEnabled: true,
+                            zoomGesturesEnabled: true,
+                            compassEnabled: true,
+                            mapToolbarEnabled: true,
+                            myLocationButtonEnabled: true,
+                            scrollGesturesEnabled: true,
+                            zoomControlsEnabled: true,
+                            buildingsEnabled: true,
+                            gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>[
+                              new Factory<OneSequenceGestureRecognizer>(() => new EagerGestureRecognizer(),),
+                            ].toSet(),
+                            onMapCreated: _onMapCreated,
+                            initialCameraPosition: CameraPosition(
+                              target: LatLng(latdouble, longdouble),
+                              zoom: 12.0,
+                            ),
+                          ),
+                          //)
+                        ),
+
+                        /* Old map - drag to move and pinch to zoom not works
                         Padding(
                             padding: const EdgeInsets.only(left: 4, right: 4.0),
                             child: new Card(
                                 shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                      color: Colors.white70, width: 1),
+                                  side: BorderSide( color: Colors.white70, width: 1),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 semanticContainer: true,
                                 clipBehavior: Clip.hardEdge,
                                 elevation: 20,
-                                child: Container(
-                                    color: Colors.white,
+                                child: SizedBox(
                                     height: 300,
-                                    child: GestureDetector(
+                                    width: 500,
+                                    //child: GestureDetector(
                                       child: GoogleMap(
                                         rotateGesturesEnabled: true,
                                         zoomGesturesEnabled: true,
+                                        compassEnabled: true,
+                                        mapToolbarEnabled: true,
+                                        myLocationButtonEnabled: true,
+                                        scrollGesturesEnabled: true,
+                                        zoomControlsEnabled: true,
                                         onMapCreated: _onMapCreated,
                                         initialCameraPosition: CameraPosition(
                                           target: LatLng(latdouble, longdouble),
@@ -204,30 +253,32 @@ class _HomePageState extends State<DetailPage> {
                                         ),
 //
                                         onTap: (LatLng pos) {
-//                                Navigator.push(
-//                                   context,
-//                                    MaterialPageRoute(builder: (context) =>
-//                                          HomeDetails(pos.latitude,pos.longitude, widget
-//                                            .places["info"]
-//                                        ['name'].toString()))
-//                                );
-                                          Navigator.pop(context);
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      HomeDetails(
-                                                          widget.list,
-                                                          widget.list2,
-                                                          widget.places,
-                                                          pos.latitude,
-                                                          pos.longitude,
-                                                          widget.places["info"]
-                                                                  ['name']
-                                                              .toString())));
+                                        /*Navigator.push(
+                                         context,
+                                          MaterialPageRoute(builder: (context) => HomeDetails(pos.latitude,pos.longitude, widget.places["info"]['name'].toString()))
+                                        );*/
+                                        //Navigator.pop(context);
+                                          /*Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                              HomeDetails(
+                                                widget.showlogout,
+                                                widget.list,
+                                                widget.list2,
+                                                widget.places,
+                                                pos.latitude,
+                                                pos.longitude,
+                                                widget.places["info"]['name'].toString()
+                                              )
+                                          )
+                                        );*/
                                         },
                                       ),
-                                    )))),
+                                    //)
+                                ))),
+                        */
+
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Center(
@@ -261,7 +312,8 @@ class _HomePageState extends State<DetailPage> {
                         getNearPlaces(context, id)
                       ],
                     )
-                  : Container()
+                  : Container(),
+              flightScreen ? Flights(id,lat.toString(),long.toString()) : Container(),
             ]),
           ),
         ));
@@ -553,7 +605,11 @@ height: 400,
         getTopics(context, id),
         Padding(
           padding: const EdgeInsets.only(
-              left: 20.0, right: 30.0, top: 14.0, bottom: 18.0),
+              left: 20.0,
+              right: 30.0,
+              top: 14.0,
+              bottom: 18.0
+          ),
           child: GestureDetector(
             onTap: () {
               setState(() {
@@ -569,112 +625,78 @@ height: 400,
     );
   }
 
-  Wrap Header() {
-    return Wrap(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  information = true;
-                  thingstodo = false;
-                  flightScreen = false;
-                });
-              },
-              child: Container(
-                width: 190,
-                height: 40,
-                child: Card(
-                  color: Colors.white70,
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Colors.white70, width: 5),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  semanticContainer: true,
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  elevation: 20,
-                  child: Center(
-                    child: new Text("Information ".toUpperCase(),
-                        style: new TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                            color: information ? Colors.orange : Colors.grey)),
-                  ),
-                ),
-              )),
+  Container Header() {
+    return Container(
+      width: 360,
+      height: 60,
+      child: Card(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.white70, width: 5),
+          borderRadius: BorderRadius.circular(10),
         ),
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: GestureDetector(
-            onTap: () {
-              setState(() {
-                information = false;
-                thingstodo = true;
-                flightScreen = false;
-              });
-            },
-            child: Container(
-              width: 160,
-              height: 40,
-              child: Card(
-                color: Colors.white70,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.white70, width: 5),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                semanticContainer: true,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                elevation: 20,
-                child: Center(
-                  child: new Text("Things to do".toUpperCase(),
+        semanticContainer: true,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        elevation: 20,
+        child:Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      information = true;
+                      thingstodo = false;
+                      flightScreen = false;
+                    });
+                  },
+                  child: new Text("Information ".toUpperCase(),
                       style: new TextStyle(
-                          fontSize: 18.0,
+                          fontSize: 12.0,
                           fontWeight: FontWeight.bold,
-                          color: thingstodo ? Colors.orange : Colors.grey)),
-                ),
-              ),
+                          color: information ? Colors.blue : Colors.grey))),
             ),
-          ),
-        ),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: GestureDetector(
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: GestureDetector(
                 onTap: () {
-                  dialog();
                   setState(() {
                     information = false;
-                    thingstodo = false;
-                    flightScreen = true;
+                    thingstodo = true;
+                    flightScreen = false;
                   });
                 },
-                child: Container(
-                  width: 200,
-                  height: 40,
-                  child: Card(
-                    color: Colors.white70,
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.white70, width: 5),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    elevation: 20,
-                    child: Center(
-                      child: new Text("Flights & Hotels ".toUpperCase(),
-                          style: new TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold,
-                              color:
-                                  flightScreen ? Colors.orange : Colors.grey)),
-                    ),
-                  ),
-                )),
-          ),
-        ),
-      ],
+                child: new Text("Things to do".toUpperCase(),
+                    style: new TextStyle(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.bold,
+                        color: thingstodo ? Colors.blue : Colors.grey)),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: GestureDetector(
+                  onTap: () {
+//                    dialog();
+                    setState(() {
+                      information = false;
+                      thingstodo = false;
+                      flightScreen = true;
+                    });
+                  },
+                  child: new Text("Flights".toUpperCase(),
+                      style: new TextStyle(
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.bold,
+                          color:
+                          flightScreen ? Colors.blue : Colors.grey))),
+            ),
+          ],
+        )
+      ),
     );
+
   }
 
   List<Widget> Lines(int total, int pos) {
@@ -801,7 +823,7 @@ height: 400,
                                       0.0,
                                       widget.list2[i],
                                       widget.places["info"]['name'].toString(),
-                                      "&tbm=isch")));
+                                      "&tbm=isch",widget.showlogout)));
                         },
                         child: Container(
                           height: 30,
@@ -881,7 +903,7 @@ height: 400,
                                           " " +
                                           widget.places["country"]['name']
                                               .toString(),
-                                      "")));
+                                      "",widget.showlogout)));
                         },
                         child: Container(
                           height: 30,
@@ -1023,7 +1045,7 @@ height: 400,
         Navigator.push(
             context,
             MaterialPageRoute(builder: (context) =>
-            UserFeedback()));
+            UserFeedback(widget.showlogout)));
 
       },
 
@@ -1064,7 +1086,7 @@ height: 400,
                               context,
                               MaterialPageRoute(
                                   builder: (context) => DetailPage(widget.list,
-                                      widget.list2, Near[i], true)));
+                                      widget.list2, Near[i], true,widget.showlogout)));
                         },
                         child: Container(
                           child: Padding(
@@ -1213,7 +1235,7 @@ height: 400,
             return Padding(
               padding: const EdgeInsets.only(top: 28.0),
               child: Center(
-                child: CircularProgressIndicator(),
+                //child: CircularProgressIndicator(),
               ),
             );
 
@@ -1446,7 +1468,7 @@ height: 400,
                                                       0.0,
                                                       null,
                                                       null,
-                                                      viaterApi[i]["url"])));
+                                                      viaterApi[i]["url"],widget.showlogout)));
                                         },
                                         child: Align(
                                           alignment: Alignment.bottomRight,
@@ -1478,7 +1500,7 @@ height: 400,
       str += "topicid[]=" + widget.list[i].toString() + "&";
     }
     String url =
-        'http://gscrape.xeeve.com/api/searchgroup?' + str + 'lang=en_US';
+        'http://gscrape.xeeve.com/api/searchgroup?lang='+Lang+"?" + str ;
 //    String url =   "http://gscrape.xeeve.com/api/searchgroup?topicid[]=2&topicid[]=3&lang=en_US";
     final response = await http.get(url);
     print("URL : " + url);
@@ -1502,7 +1524,7 @@ height: 400,
       str += "topicid[]=" + widget.list[i].toString() + "&";
     }
     String url =
-        'http://gscrape.xeeve.com/api/searchnear?id=' + id + '&lang=en_US';
+        'http://gscrape.xeeve.com/api/searchnear?lang='+Lang+"?"+'id=' + id ;
 //    String url =   "http://gscrape.xeeve.com/api/searchgroup?topicid[]=2&topicid[]=3&lang=en_US";
     final response = await http.get(url);
     print("URL : " + url);
@@ -1534,7 +1556,7 @@ height: 400,
       str += "topicid[]=" + widget.list[i].toString() + "&";
     }
 
-    String url = 'http://gscrape.xeeve.com/api/searchnear?id=' +
+    String url = 'http://gscrape.xeeve.com/api/searchnear?lang='+Lang+"?"+'id=' +
         id +
         "&" +
         str +
@@ -1563,7 +1585,7 @@ height: 400,
       str += "topicid[]=" + widget.list[i].toString() + "&";
     }
 
-    String url = 'http://gscrape.xeeve.com/api/city?id=' + id;
+    String url = 'http://gscrape.xeeve.com/api/city?lang='+Lang+"?"+'id=' + id;
     print("URL NearCities " + url);
 
 //    String url =   "http://gscrape.xeeve.com/api/searchgroup?topicid[]=2&topicid[]=3&lang=en_US";
@@ -1593,12 +1615,19 @@ height: 400,
 
   Future<Map<String, dynamic>> viaterplaces(String id) async {
     var str = "";
+    var url="";
     for (int i = 0; i < widget.list.length; i++) {
       str += "topicid[]=" + widget.list[i].toString() + "&";
     }
 
-    String url = 'http://gscrape.xeeve.com/api/city?id=' + id;
-    print("URL NearCities " + url);
+
+    if(widget.list.length>0){
+       url = 'http://gscrape.xeeve.com/api/city?lang='+Lang+"?"+'id=' + id+"&"+str;
+    }else{
+       url = 'http://gscrape.xeeve.com/api/city?id=' + id;
+    }
+
+    print("URLumer " + url);
 //    String url =   "http://gscrape.xeeve.com/api/searchgroup?topicid[]=2&topicid[]=3&lang=en_US";
     final response = await http.get(url);
     print("URL : " + url);
@@ -1626,7 +1655,7 @@ height: 400,
       onPressed: () {
         if (citipage) {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => UserLike()));
+              context, MaterialPageRoute(builder: (context) => UserLike(widget.showlogout)));
         } else {}
       },
     );

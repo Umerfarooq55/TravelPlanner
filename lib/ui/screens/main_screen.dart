@@ -94,7 +94,7 @@ class _MainScreenState extends State<MainScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) =>
-                        UserLike())
+                        UserLike(widget.showlogout))
                 );
               },
             ),
@@ -105,7 +105,7 @@ class _MainScreenState extends State<MainScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) =>
-                        UserFeedback())
+                        UserFeedback(widget.showlogout))
                 );
               },
             ),

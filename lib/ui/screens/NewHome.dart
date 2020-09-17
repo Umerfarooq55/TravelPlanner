@@ -25,7 +25,7 @@ class NewHome extends StatefulWidget {
 
     showlogout=bool;
   }
-  
+
   _NewHomeState createState() => _NewHomeState();
 }
 
@@ -97,7 +97,7 @@ class _NewHomeState extends State<NewHome> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) =>
-                          UserLike())
+                          UserLike(widget.showlogout))
                   );
                 },
               ),
@@ -117,7 +117,7 @@ class _NewHomeState extends State<NewHome> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) =>
-                          UserFeedback())
+                          UserFeedback(widget.showlogout))
                   );
                 },
               ),
@@ -144,7 +144,7 @@ class _NewHomeState extends State<NewHome> {
           ),
         ),
         body:
-        Topics());
+        Topics(widget.showlogout));
 
 
   }

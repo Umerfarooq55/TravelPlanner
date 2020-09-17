@@ -1,15 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:onboarding_flow/ui/model/city.dart';
 import 'package:onboarding_flow/ui/model/CityModel.dart';
 import 'package:onboarding_flow/ui/model/CityDetail.dart';
 import 'package:http/http.dart' as http;
+import 'dart:ui' as ui;
 import 'package:onboarding_flow/ui/pages/CityDetails.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -18,10 +21,14 @@ class HomePageWithoutAppbar extends StatefulWidget {
   List<dynamic> list2;
   bool searchture;
   List<dynamic> searchnames;
+  List<dynamic> Con;
       bool distancetrue;
   bool subtopicstrue;
+  bool continettrue;
   double lowerValue;
-  HomePageWithoutAppbar(List<dynamic> list, List<dynamic> list2,List<dynamic> searchnames,bool searchture,bool distancetrue, bool subtopicstrue, double lowerValue) {
+  bool showlogout;
+  bool navigatate=false;
+  HomePageWithoutAppbar(List<dynamic> list, List<dynamic> list2,List<dynamic> searchnames,List<dynamic> Con,bool searchture,bool distancetrue, bool subtopicstrue,bool continettrue, double lowerValue, bool showlogou) {
     this.list = list;
     this.list2 = list2;
     this.searchture=searchture;
@@ -29,6 +36,9 @@ class HomePageWithoutAppbar extends StatefulWidget {
     this.distancetrue=distancetrue;
     this.lowerValue=lowerValue;
     this.subtopicstrue=subtopicstrue;
+    this.continettrue=continettrue;
+    this.showlogout=showlogout;
+    this.Con=Con;
   }
   @override
   _HomePageWithoutAppbarState createState() => _HomePageWithoutAppbarState();
@@ -38,6 +48,7 @@ class _HomePageWithoutAppbarState extends State<HomePageWithoutAppbar> {
   int _selectedIndex = 0;
   final List<City> _allCities = City.allCities();
   Future<CityModel> futureAlbum;
+  var Lang ="en";
   FirebaseAnalytics analytics = FirebaseAnalytics();
   Future<void> _sendAnalyticsEvent(String name) async {
 
@@ -51,8 +62,14 @@ class _HomePageWithoutAppbarState extends State<HomePageWithoutAppbar> {
   }
   @override
   void initState() {
-
-
+    print("Computer 100 "+widget.continettrue.toString());
+    var arr = ['it','es','fr','de','zh','it','ru','ja','en'];
+    print( "TimeZone " +ui.window.locale.languageCode);
+    if(arr.contains(ui.window.locale.languageCode)){
+      Lang = ui.window.locale.languageCode;
+    }else{
+      Lang = "en";
+    }
     futureAlbum = fetchAlbum();
     CityDetail detail;
     futureAlbum.then((value) {
@@ -63,11 +80,13 @@ class _HomePageWithoutAppbarState extends State<HomePageWithoutAppbar> {
       print("shortDec " + detail.shortDes.toString());
     });
     _sendAnalyticsEvent("");
+    print("objectumer"+widget.showlogout.toString());
 
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       height: 500,
       child: Padding(
@@ -87,7 +106,6 @@ class _HomePageWithoutAppbarState extends State<HomePageWithoutAppbar> {
 
 
     return FutureBuilder(
-
         future: fetchAlbum(), // a previously-obtained Future<String> or null
         builder: (BuildContext context, AsyncSnapshot<CityModel> snapshot) {
 
@@ -107,6 +125,7 @@ class _HomePageWithoutAppbarState extends State<HomePageWithoutAppbar> {
                  CityDetail detail;
                  detail =
                      CityDetail.fromJson(snapshot.data.places[i]["details"]);
+
                  return Wrap(
                    children: <Widget>[
 
@@ -114,13 +133,13 @@ class _HomePageWithoutAppbarState extends State<HomePageWithoutAppbar> {
                        onTap: () {
                          String str = "";
 
-                         Navigator.push(
-                             context,
-                             MaterialPageRoute(builder: (context) =>
-                                 DetailPage(widget.list, widget.list2,
-                                     snapshot.data.places[i], true))
+                           Navigator.push(
+                               context,
+                               MaterialPageRoute(builder: (context) =>
+                                   DetailPage(widget.list, widget.list2,
+                                       snapshot.data.places[i], true,widget.showlogout))
 
-                         );
+                           );
                        },
                        child: Container(
 
@@ -188,6 +207,8 @@ class _HomePageWithoutAppbarState extends State<HomePageWithoutAppbar> {
                                          padding: const EdgeInsets.only(
                                              left: 12.0),
                                          child: Container(
+                                           width: 210,
+                                           height: 100,
                                            child: new Column(
                                                mainAxisAlignment: MainAxisAlignment
                                                    .start,
@@ -195,7 +216,7 @@ class _HomePageWithoutAppbarState extends State<HomePageWithoutAppbar> {
                                                CrossAxisAlignment.start,
                                                children: <Widget>[
 
-                                                 Center(
+                                                 Flexible(
                                                    child: new Text(
                                                        snapshot.data
                                                            .places[i]["info"]
@@ -206,17 +227,31 @@ class _HomePageWithoutAppbarState extends State<HomePageWithoutAppbar> {
                                                                .bold,
                                                            color: Colors.red)),
                                                  ),
-                                                 Center(
-                                                   child: new Text(
-                                                       snapshot.data
-                                                           .places[i]["country"]
-                                                       ['name'],
-                                                       style: new TextStyle(
-                                                           fontSize: 18.0,
-                                                           fontWeight: FontWeight
-                                                               .normal,
-                                                           color: Colors.grey)),
-                                                 ),
+                                                 snapshot.data
+                                                   .places[i]["level"]!=2?new Text(
+                                                     snapshot.data
+                                                         .places[i]["levels"]["2"]["name"]+", "+
+                                                     snapshot.data
+                                                         .places[i]["country"]
+                                                     ['name'],
+
+                                                     style: new TextStyle(
+                                                         fontSize: 15.0,
+
+                                                         fontWeight: FontWeight
+                                                             .normal,
+                                                         color: Colors.grey),
+                                                 softWrap: false,
+                                                 overflow:  TextOverflow.fade,):
+                                                 new Text(
+                                                     snapshot.data
+                                                         .places[i]["country"]
+                                                     ['name'],
+                                                     style: new TextStyle(
+                                                         fontSize: 18.0,
+                                                         fontWeight: FontWeight
+                                                             .normal,
+                                                         color: Colors.grey)),
 
 
                                                ]),
@@ -289,67 +324,143 @@ class _HomePageWithoutAppbarState extends State<HomePageWithoutAppbar> {
 
     }
   }
-  Future<CityModel>   fetchAlbum() async {
+  Future<CityModel>  fetchAlbum() async {
     var str = "";
     var searchnames = "";
+    bool Con_bool=false;
+    var Con = "";
     String url;
     print("filter subtopics "+widget.subtopicstrue.toString());
     print("filter search "+widget.searchture.toString());
     print("filter distance "+widget.distancetrue.toString());
+    print("filter continettrue "+widget.continettrue.toString());
+    print("search names "+widget.searchnames.toString());
+    print("search Con "+widget.Con.toString());
+    print("Computer: 1006 " + widget.continettrue.toString());
+    Con_bool=widget.continettrue;
     for (int i = 0; i < widget.list.length; i++) {
       str += "topicid[]=" + widget.list[i].toString() + "&";
     }
+    print("Computer: 1005 " + widget.continettrue.toString());
     for (int b = 0; b < widget.searchnames.length; b++) {
       searchnames += "filtercountry[]=" + widget.searchnames[b].toString() + "&";
+    }
+    print("Computer: 1004 " + widget.continettrue.toString());
+    for (int b = 0; b < widget.Con.length; b++) {
+       Con+= "filtercontinent[]=" + widget.Con[b].toString() + "&";
     }
     print("SearchURL3 "+widget.searchture.toString());
     if(widget.searchture&&!widget.subtopicstrue&&!widget.distancetrue){
 
         url =
-            'http://gscrape.xeeve.com/api/searchgroup?'+ searchnames+ 'lang=en_US';
+            'http://gscrape.xeeve.com/api/searchgroup?lang='+Lang+"&"+ searchnames;
         print("search true "+url);
     }
+    print("Computer: 1003 " + widget.continettrue.toString());
+    if(widget.searchture&&!widget.subtopicstrue&&!widget.distancetrue&&Con_bool){
+
+      url =
+          'http://gscrape.xeeve.com/api/searchgroup?lang='+Lang+"&"+ searchnames+ Con;
+      print("search true "+url);
+    }
+    print("Computer: 1002 " + widget.continettrue.toString());
     if(widget.distancetrue&&!widget.subtopicstrue&&!widget.searchture){
       Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
        url =
-          "http://gscrape.xeeve.com/api/searchgroup?filterlatitude="+position.latitude.toString()+"&filterlongitude="+position.longitude.toString()+"&filterdistance="+widget.lowerValue.toString();
+          "http://gscrape.xeeve.com/api/searchgroup?lang="+Lang+"&"+"filterlatitude="+position.latitude.toString()+"&filterlongitude="+position.longitude.toString()+"&filterdistance="+widget.lowerValue.toString();
       print("distance true "+url);
     }
-   if(widget.subtopicstrue&&!widget.distancetrue&&!widget.searchture) {
-     url =
-         'http://gscrape.xeeve.com/api/searchgroup?' + str + 'lang=en_US';
-     print("Subtopics  true "+url);
-   }
-    if(!widget.subtopicstrue&&!widget.distancetrue&&!widget.searchture) {
-      url =
-      "http://gscrape.xeeve.com/api/searchgroup?topicid[]=143&topicid[]=144&lang=en_US";
-      print("No filter "+url);
-    }
-    if(widget.subtopicstrue&&widget.distancetrue&&!widget.searchture) {
+    print("Computer: 1001 " + widget.continettrue.toString());
+    if(widget.distancetrue&&!widget.subtopicstrue&&!widget.searchture&&Con_bool){
       Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       url =
-          'http://gscrape.xeeve.com/api/searchgroup?' + str +"filterlatitude="+position.latitude.toString()+"&filterlongitude="+position.longitude.toString()+"&filterdistance="+widget.lowerValue.toString();
+          "http://gscrape.xeeve.com/api/searchgroup?lang="+Lang+"&"+"filterlatitude="+position.latitude.toString()+"&filterlongitude="+position.longitude.toString()+"&filterdistance="+widget.lowerValue.toString()+"&"+Con;
+      print("distance true "+url);
+    }
+    print("Computer: 1000 " + widget.continettrue.toString());
+   if(widget.subtopicstrue&&!widget.distancetrue&&!widget.searchture) {
+     url =
+         'http://gscrape.xeeve.com/api/searchgroup?lang='+Lang+"&" + str;
+     print("Subtopics  true "+url);
+   }
+    print("Computer: 101 " + widget.continettrue.toString());
+    if(widget.subtopicstrue&&!widget.distancetrue&&!widget.searchture&&Con_bool) {
+      url =
+          'http://gscrape.xeeve.com/api/searchgroup?lang='+Lang+"&" + str + Con;
+      print("Subtopics  true "+url);
+    }
+    print("Computer: 102 " + widget.continettrue.toString());
+    if(!widget.subtopicstrue&&!widget.distancetrue&&!widget.searchture) {
+      url =
+      "http://gscrape.xeeve.com/api/searchgroup?lang="+Lang+"&"+"topicid[]=143&topicid[]=144";
+      print("No filter "+url);
+    }
+    print("Computer: 103 " + widget.continettrue.toString());
+    if(!widget.subtopicstrue&&!widget.distancetrue&&!widget.searchture&&!Con_bool) {
+      url =
+      "http://gscrape.xeeve.com/api/searchgroup?lang="+Lang+"&"+"topicid[]=143&topicid[]=144";
+      print("No filter "+url);
+    }
+    print("Computer: 104 " + widget.continettrue.toString());
+    print("Computer: 105 " + widget.continettrue.toString());
+    if(widget.subtopicstrue&&widget.distancetrue&&!widget.searchture) {
+      print("Computer: 1 " + widget.continettrue.toString());
+      Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      print("Computer: 2 " + widget.continettrue.toString());
+      url =
+          'http://gscrape.xeeve.com/api/searchgroup?lang='+Lang+"&" + str +"filterlatitude="+position.latitude.toString()+"&filterlongitude="+position.longitude.toString()+"&filterdistance="+widget.lowerValue.toString();
+      print("Subtopics & distance  true "+url);
+      print("Computer: 3 " + widget.continettrue.toString());
+    }
+    print("Computer: 105 " + widget.continettrue.toString());
+    if(widget.subtopicstrue&&widget.distancetrue&&!widget.searchture&&Con_bool) {
+      Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      url =
+          'http://gscrape.xeeve.com/api/searchgroup?lang='+Lang+"&" + str +"filterlatitude="+position.latitude.toString()+"&filterlongitude="+position.longitude.toString()+"&filterdistance="+widget.lowerValue.toString()+"&"+Con;
       print("Subtopics & distance  true "+url);
     }
+    print("Computer: 106 " + widget.continettrue.toString());
     if(widget.subtopicstrue&&!widget.distancetrue&&widget.searchture) {
       Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       url =
-          'http://gscrape.xeeve.com/api/searchgroup?' + str +searchnames;
+          'http://gscrape.xeeve.com/api/searchgroup?lang='+Lang+"&" + str +searchnames;
       print("Subtopics & search  true "+url);
     }
+    if(widget.subtopicstrue&&!widget.distancetrue&&widget.searchture&&Con_bool) {
+      Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      url =
+          'http://gscrape.xeeve.com/api/searchgroup?lang='+Lang+"&" + str +searchnames+Con;
+      print("Subtopics & search  true "+url);
+    }
+    print("Computer: 107 " + widget.continettrue.toString());
     if(!widget.subtopicstrue&&widget.distancetrue&&widget.searchture) {
       Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       url =
-        'http://gscrape.xeeve.com/api/searchgroup?' + searchnames +"filterlatitude="+position.latitude.toString()+"&filterlongitude="+position.longitude.toString()+"&filterdistance="+widget.lowerValue.toString();
+        'http://gscrape.xeeve.com/api/searchgroup?lang='+Lang+"&"+ searchnames +"filterlatitude="+position.latitude.toString()+"&filterlongitude="+position.longitude.toString()+"&filterdistance="+widget.lowerValue.toString();
       print("distance & search  true "+url);
     }
-    if(widget.subtopicstrue&&widget.distancetrue&&widget.searchture){
+    print("Computer: 108 " + widget.continettrue.toString());
+    if(!widget.subtopicstrue&&widget.distancetrue&&widget.searchture&&Con_bool) {
       Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-     url="https://gscrape.xeeve.com/api/searchgroup?lang=en_US&"+str+"filterlatitude="+position.latitude.toString()+"&filterlongitude="+position.longitude.toString()+"&filterdistance="+widget.lowerValue.toString()+"&"+searchnames;
+      url =
+          'http://gscrape.xeeve.com/api/searchgroup?lang='+Lang+"&" + searchnames +"filterlatitude="+position.latitude.toString()+"&filterlongitude="+position.longitude.toString()+"&filterdistance="+widget.lowerValue.toString()+"&"+Con;
+      print("distance & search  true "+url);
     }
-
+    print("Computer: 109 " + widget.continettrue.toString());
+    if(widget.subtopicstrue&&widget.distancetrue&&widget.searchture&&Con_bool){
+      Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+     url="https://gscrape.xeeve.com/api/searchgroup?lang="+Lang+"&"+str+"filterlatitude="+position.latitude.toString()+"&filterlongitude="+position.longitude.toString()+"&filterdistance="+widget.lowerValue.toString()+"&"+searchnames+Con;
+    }
+    print("Computer: 5000 " + Con_bool.toString());
+    if(!widget.subtopicstrue&&!widget.distancetrue&&!widget.searchture&&Con_bool){
+      Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+   url=    "http://gscrape.xeeve.com/api/searchgroup?lang="+Lang+"&"+"topicid[]=143&topicid[]=144&"+Con;
+      print("Computer: 20000" +Con_bool.toString());
+    }
+    print("Computer: 110 " + widget.continettrue.toString());
     final response = await http.get(url);
-    print("URL : " + url);
+    print("Computer: 900" +Con_bool.toString());
+    print("URL Final: " + url);
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
