@@ -64,7 +64,7 @@ class _HomePageState extends State<DetailPage> {
   String expandText = 'Read More';
   final LatLng _center = const LatLng(45.521563, -122.677433);
   GoogleMapController mapController;
-  var Lang="en";
+  var Lang ="en";
   bool information = true;
   bool thingstodo = false;
   bool flightScreen = false;
@@ -198,24 +198,54 @@ class _HomePageState extends State<DetailPage> {
               information
                   ? Column(
                       children: <Widget>[
+                        SizedBox(
+                          height: 300,
+                          width: 500,
+                          //child: GestureDetector(
+                          child: GoogleMap(
+                            rotateGesturesEnabled: true,
+                            zoomGesturesEnabled: true,
+                            compassEnabled: true,
+                            mapToolbarEnabled: true,
+                            myLocationButtonEnabled: true,
+                            scrollGesturesEnabled: true,
+                            zoomControlsEnabled: true,
+                            buildingsEnabled: true,
+                            gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>[
+                              new Factory<OneSequenceGestureRecognizer>(() => new EagerGestureRecognizer(),),
+                            ].toSet(),
+                            onMapCreated: _onMapCreated,
+                            initialCameraPosition: CameraPosition(
+                              target: LatLng(latdouble, longdouble),
+                              zoom: 12.0,
+                            ),
+                          ),
+                          //)
+                        ),
+
+                        /* Old map - drag to move and pinch to zoom not works
                         Padding(
                             padding: const EdgeInsets.only(left: 4, right: 4.0),
                             child: new Card(
                                 shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                      color: Colors.white70, width: 1),
+                                  side: BorderSide( color: Colors.white70, width: 1),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 semanticContainer: true,
                                 clipBehavior: Clip.hardEdge,
                                 elevation: 20,
-                                child: Container(
-                                    color: Colors.white,
+                                child: SizedBox(
                                     height: 300,
-                                    child: GestureDetector(
+                                    width: 500,
+                                    //child: GestureDetector(
                                       child: GoogleMap(
                                         rotateGesturesEnabled: true,
                                         zoomGesturesEnabled: true,
+                                        compassEnabled: true,
+                                        mapToolbarEnabled: true,
+                                        myLocationButtonEnabled: true,
+                                        scrollGesturesEnabled: true,
+                                        zoomControlsEnabled: true,
                                         onMapCreated: _onMapCreated,
                                         initialCameraPosition: CameraPosition(
                                           target: LatLng(latdouble, longdouble),
@@ -223,31 +253,32 @@ class _HomePageState extends State<DetailPage> {
                                         ),
 //
                                         onTap: (LatLng pos) {
-//                                Navigator.push(
-//                                   context,
-//                                    MaterialPageRoute(builder: (context) =>
-//                                          HomeDetails(pos.latitude,pos.longitude, widget
-//                                            .places["info"]
-//                                        ['name'].toString()))
-//                                );
-                                          Navigator.pop(context);
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      HomeDetails(
-                                                        widget.showlogout,
-                                                          widget.list,
-                                                          widget.list2,
-                                                          widget.places,
-                                                          pos.latitude,
-                                                          pos.longitude,
-                                                          widget.places["info"]
-                                                                  ['name']
-                                                              .toString())));
+                                        /*Navigator.push(
+                                         context,
+                                          MaterialPageRoute(builder: (context) => HomeDetails(pos.latitude,pos.longitude, widget.places["info"]['name'].toString()))
+                                        );*/
+                                        //Navigator.pop(context);
+                                          /*Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                              HomeDetails(
+                                                widget.showlogout,
+                                                widget.list,
+                                                widget.list2,
+                                                widget.places,
+                                                pos.latitude,
+                                                pos.longitude,
+                                                widget.places["info"]['name'].toString()
+                                              )
+                                          )
+                                        );*/
                                         },
                                       ),
-                                    )))),
+                                    //)
+                                ))),
+                        */
+
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Center(
@@ -574,7 +605,11 @@ height: 400,
         getTopics(context, id),
         Padding(
           padding: const EdgeInsets.only(
-              left: 20.0, right: 30.0, top: 14.0, bottom: 18.0),
+              left: 20.0,
+              right: 30.0,
+              top: 14.0,
+              bottom: 18.0
+          ),
           child: GestureDetector(
             onTap: () {
               setState(() {
@@ -1200,7 +1235,7 @@ height: 400,
             return Padding(
               padding: const EdgeInsets.only(top: 28.0),
               child: Center(
-                child: CircularProgressIndicator(),
+                //child: CircularProgressIndicator(),
               ),
             );
 
